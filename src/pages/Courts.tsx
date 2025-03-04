@@ -1,9 +1,10 @@
-import React from 'react'
-
-const Courts:React.FC = () => {
+import CourtsList from "../components/CourtsList";
+const Courts: React.FC = () => {
   return (
-    <div>Courts</div>
-  )
+    <section>
+      <CourtsList />
+    </section>
+  );
 }
 
 export default Courts

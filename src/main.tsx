@@ -6,7 +6,7 @@ import './index.css'
 import App from './App.tsx'
 import Main from './pages/Main.tsx'
 import Courts from './pages/Courts.tsx'
-import Auth from './pages/Auth.tsx'
+import Login from './pages/Login.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -14,7 +14,7 @@ createRoot(document.getElementById('root')!).render(
       <Routes>
         <Route path='/' element={<App />}>
           <Route index element={<Main/>}/>
-          <Route path='login' element={<Auth/>}/>
+          <Route path='login' element={<Login/>}/>
           <Route path='courts' element={<Courts/>}/>
         </Route>
       </Routes>
