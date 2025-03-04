@@ -1,7 +1,7 @@
 import CourtsList from "../components/CourtsList";
 const Courts: React.FC = () => {
   return (
-    <section>
+    <section className="w-full h-full">
       <CourtsList />
     </section>
   );
