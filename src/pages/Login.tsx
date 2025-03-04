@@ -1,22 +1,46 @@
-import React from 'react'
+import React, { useState } from 'react'
+
 
 const Login:React.FC = () => {
+
+  const[ email, setEmail ] = useState<string>("")
+  const[ password, setPassword ] = useState<string>("")
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    console.log(email, password)
+    e.preventDefault()
+  }
+
   return (
     <section className='w-full h-full flex justify-center items-center'>
-      <form className='border-1 border-slate-200 py-2.5 shadow-2xl flex justify-between flex-col rounded w-96 '>
-        <h2 className='text-center mb-2.5 font-semibold text-2xl'>Авторизаці</h2>
-        <div className='flex flex-col gap-4 px-2.5'>
-          <span className='w-full flex flex-col gap-1'>
-            <label htmlFor="email-input">Електронна Пошта</label>
-            <input className="border-1 border-slate-400 w-full rounded h-9 px-1"  placeholder='Введвіть пошту'  type="text" id="email-input" />
+      <form onSubmit={handleSubmit} className='border h-96 border-slate-200 py-5 shadow-2xl flex items-center flex-col rounded w-96 bg-white'>
+        <h2 className='text-2xl font-medium text-center mb-4'>Увійти</h2>
+        <div className='w-full px-6 flex flex-col justify-center gap-5'>
+          <span className='flex flex-col gap-1'>
+            <label htmlFor='email-input' className='text-lg'>Електронна Пошта</label>
+            <input className='h-9 border border-slate-300 px-2 w-full rounded' 
+              type='email' 
+              placeholder='Введіть пошту ' 
+              id='email-input' 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              />
           </span>
           <span className='flex flex-col gap-1'>
-            <label htmlFor="email-input w-full">Електронна Пошта</label>
-            <input className="border-1 border-slate-400 w-full rounded h-9 px-1" placeholder='Введвіть пароль' type="text" id="email-input" />
+            <label htmlFor='password-input' className='text-lg'>Пароль</label>
+            <input className='h-9 border border-slate-300 px-2 w-full rounded' 
+              type='password' 
+              placeholder='Введіть пароль' 
+              id='password-input'
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              />
           </span>
-          <button className=' py-1.5 rounded bg-sky-500 text-white cursor-pointer transition-all hover:bg-sky-600'>Увійти</button>
-          <p className='text-gray-600 text-center'>Немає Аккаунту? 
-            <span className=' text-sky-500 underline underline-offset-2 hover:text-sky-600 cursor-pointer'>Зараеєструватись</span>
+          <button  type="submit" className='bg-sky-500 hover:bg-sky-600 transition-all cursor-pointer py-2.5 text-white font-medium rounded w-full'>
+            Увійти
+          </button>
+          <p className='text-center'>Немає облікового запису? 
+            <span className='text-sky-500 hover:text-sky-600 hover:underline cursor-pointer'> Зареєструватись</span>
           </p>
         </div>
       </form>
