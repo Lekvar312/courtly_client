@@ -16,7 +16,7 @@ const AuthButton = () => {
     }
   }
   return (
-    <button 
+    <button
     onClick={handleClick}
       className={`${token ? "bg-red-500 hover:bg-red-600" : "bg-sky-500  hover:bg-sky-600"  } text-white px-3 py-1.5 rounded transition-all cursor-pointer text-lg`}>
         {token ? "Вийти" : "Увійти"}

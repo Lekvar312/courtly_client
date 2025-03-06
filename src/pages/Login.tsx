@@ -7,7 +7,6 @@ const Login: React.FC = () => {
 
   const dispatch = useDispatch<AppDispatch>();
   const { loading, error } = useSelector((state: RootState) => state.user);
-
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
@@ -26,7 +25,7 @@ const Login: React.FC = () => {
       >
         {!error ? <h2 className='text-2xl font-medium text-center mb-4'>Увійти</h2> : <h2 className="mb-4 text-center text-2xl text-red-600">{error}</h2>}
         <div className="w-full px-6 flex flex-col justify-center gap-5">
-          <span className="flex flex-col gap-1">
+          <span className="flex flex-col gap-0.5">
             <label htmlFor="email-input" className="text-lg">Електронна Пошта</label>
             <input
               className="h-9 border border-slate-300 px-2 w-full rounded"
@@ -37,7 +36,7 @@ const Login: React.FC = () => {
               onChange={(e) => setEmail(e.target.value)}
             />
           </span>
-          <span className="flex flex-col gap-1">
+          <span className="flex flex-col gap-0.5">
             <label htmlFor="password-input" className="text-lg">Пароль</label>
             <input
               className="h-9 border border-slate-300 px-2 w-full rounded"

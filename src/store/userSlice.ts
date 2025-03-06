@@ -1,14 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axiosInstance from "../api/axiosInstance";
-import { jwtDecode } from "jwt-decode";
-import { loginService, logoutService } from "../services/AuthServices";
+import { loginService, logoutService, getCurrentUserService } from "../services/AuthServices";
 
 export const logoutUser = createAsyncThunk(
   "user/logout",
   async (_, { rejectWithValue }) => {
     try {
-      await logoutService ()
-      return; 
+      await logoutService();
+      return;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Помилка при виході");
     }
@@ -17,28 +15,29 @@ export const logoutUser = createAsyncThunk(
 
 export const loginUser = createAsyncThunk(
   "user/login",
-  async (credentials: { email: string; password: string }, { rejectWithValue }) => {
+  async (credentials: { email: string; password: string }, { rejectWithValue, dispatch }) => {
     try {
-      const accessToken = await loginService(credentials)
-      localStorage.setItem("accessToken", accessToken)
-      return accessToken
+      const accessToken = await loginService(credentials);
+      localStorage.setItem("accessToken", accessToken);
+      dispatch(getCurrentUser()); // Після логіну отримуємо поточного користувача
+      return accessToken;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Помилка авторизації");
     }
   }
 );
 
-const getUserFromToken = (token: string | null) => {
-  if(!token) return null;
-  try {
-    return jwtDecode<{ name: string; email: string; role: string }>(token);
-  } catch(error) {
-    console.log(error)
-    return null;;
+export const getCurrentUser = createAsyncThunk(
+  "user/getCurrentUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await getCurrentUserService();
+      return response.data; // Якщо все ок, то дані користувача
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Помилка при отриманні користувача");
+    }
   }
-};
-
-
+);
 
 interface UserState {
   user: { name: string; email: string; role: string } | null;
@@ -48,7 +47,7 @@ interface UserState {
 }
 
 const initialState: UserState = {
-  user: getUserFromToken(localStorage.getItem("accessToken")),
+  user: null, 
   token: localStorage.getItem("accessToken") || null,
   loading: false,
   error: null,
@@ -57,9 +56,7 @@ const initialState: UserState = {
 const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {
-
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(loginUser.pending, (state) => {
@@ -69,7 +66,6 @@ const userSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
         state.token = action.payload;
-        state.user = getUserFromToken(action.payload);
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -85,6 +81,18 @@ const userSlice = createSlice({
         state.user = null;
       })
       .addCase(logoutUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(getCurrentUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getCurrentUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload; // Дані користувача
+      })
+      .addCase(getCurrentUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });
