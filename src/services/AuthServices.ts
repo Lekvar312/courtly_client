@@ -19,3 +19,8 @@ export const getCurrentUserService = async () => {
   });
   return response;
 };
+
+export const signupService = async (credentials: {name: string, email:string, password:string}) => {
+  const response = await axiosInstance.post('auth/signup', credentials)
+  return response.data
+}

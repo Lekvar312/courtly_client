@@ -8,6 +8,7 @@ import Main from './pages/Main.tsx'
 import Courts from './pages/Courts.tsx'
 import Login from './pages/Login.tsx'
 import { store  } from './store/store.ts'
+import SignUp from './pages/SignUp.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -17,6 +18,7 @@ createRoot(document.getElementById('root')!).render(
           <Route path='/' element={<App />}>
             <Route index element={<Main/>}/>
             <Route path='login' element={<Login/>}/>
+            <Route path='signup' element={<SignUp/>}/>
             <Route path='courts' element={<Courts/>}/>
           </Route>
         </Routes>

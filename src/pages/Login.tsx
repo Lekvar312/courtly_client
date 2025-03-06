@@ -1,7 +1,11 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { loginUser} from "../store/userSlice"; 
 import { AppDispatch, RootState } from '../store/store';
+
+import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+
+
 
 const Login: React.FC = () => {
 
@@ -21,7 +25,7 @@ const Login: React.FC = () => {
     <section className="w-full h-full flex justify-center items-center">
       <form
         onSubmit={handleLogin}
-        className={`border h-96 transition-all ${error ? 'border-2 border-red-600' : "border-slate-200 "} py-5 shadow-2xl flex items-center flex-col rounded w-96 bg-white`}
+        className={`border h-96 transition-all ${error ? 'border-2 border-red-600' : "border-slate-200 "} py-5 shadow-2xl flex items-center flex-col rounded w-full sm:w-96 bg-white`}
       >
         {!error ? <h2 className='text-2xl font-medium text-center mb-4'>Увійти</h2> : <h2 className="mb-4 text-center text-2xl text-red-600">{error}</h2>}
         <div className="w-full px-6 flex flex-col justify-center gap-5">
@@ -58,7 +62,7 @@ const Login: React.FC = () => {
             Немає облікового запису?
             <br />
             <span className="text-sky-500 hover:text-sky-600 hover:underline cursor-pointer">
-              Зареєструватися
+              <Link to="/signup">Зареєструватися</Link>
             </span>
           </p>
         </div>

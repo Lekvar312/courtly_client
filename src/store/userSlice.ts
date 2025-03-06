@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { loginService, logoutService, getCurrentUserService } from "../services/AuthServices";
+import { loginService, logoutService, getCurrentUserService, signupService } from "../services/AuthServices";
 
 export const logoutUser = createAsyncThunk(
   "user/logout",
@@ -26,6 +26,19 @@ export const loginUser = createAsyncThunk(
     }
   }
 );
+
+export const signupUser = createAsyncThunk(
+  "user/signup", 
+  async (creadentials: {name:string, email:string, password: string}, {rejectWithValue}) => {
+    try{
+      const response = await signupService(creadentials)
+      localStorage.setItem("accessToken", response.accessToken)
+      return response
+    }catch(error:any){
+      return rejectWithValue(error.response?.data?.message || "Помилка реєстрації")
+    }
+  }
+)
 
 export const getCurrentUser = createAsyncThunk(
   "user/getCurrentUser",
@@ -95,6 +108,19 @@ const userSlice = createSlice({
       .addCase(getCurrentUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase(signupUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(signupUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.token = action.payload.accessToken;
+        state.user = action.payload.user;
+      })
+      .addCase(signupUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string; 
       });
   },
 });
