@@ -17,6 +17,7 @@ export const getCurrentUserService = async () => {
   const response = await axiosInstance.get("/users/current", {
     headers: { Authorization: `Bearer ${token}` },
   });
+  console.log("Current User:", response.data); 
   return response;
 };
 

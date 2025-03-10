@@ -1,14 +1,11 @@
 import React, { useState } from "react";
-import { loginUser} from "../store/userSlice"; 
-import { AppDispatch, RootState } from '../store/store';
+import { loginUser } from "../store/userSlice";
+import { AppDispatch, RootState } from "../store/store";
 
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
-
-
 const Login: React.FC = () => {
-
   const dispatch = useDispatch<AppDispatch>();
   const { loading, error } = useSelector((state: RootState) => state.user);
   const [email, setEmail] = useState<string>("");
@@ -17,20 +14,28 @@ const Login: React.FC = () => {
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     dispatch(loginUser({ email, password }));
-    setEmail("")
-    setPassword("")
+    setEmail("");
+    setPassword("");
   };
 
   return (
     <section className="w-full h-full flex justify-center items-center">
       <form
         onSubmit={handleLogin}
-        className={`border h-96 transition-all ${error ? 'border-2 border-red-600' : "border-slate-200 "} py-5 shadow-2xl flex items-center flex-col rounded w-full sm:w-96 bg-white`}
+        className={`border h-96 transition-all ${
+          error ? "border-2 border-red-600" : "border-slate-200 "
+        } py-5 shadow-2xl flex items-center flex-col rounded w-full sm:w-96 bg-white`}
       >
-        {!error ? <h2 className='text-2xl font-medium text-center mb-4'>Увійти</h2> : <h2 className="mb-4 text-center text-2xl text-red-600">{error}</h2>}
+        {!error ? (
+          <h2 className="text-2xl font-medium text-center mb-4">Увійти</h2>
+        ) : (
+          <h2 className="mb-4 text-center text-2xl text-red-600">{error}</h2>
+        )}
         <div className="w-full px-6 flex flex-col justify-center gap-5">
           <span className="flex flex-col gap-0.5">
-            <label htmlFor="email-input" className="text-lg">Електронна Пошта</label>
+            <label htmlFor="email-input" className="text-lg">
+              Електронна Пошта
+            </label>
             <input
               className="h-9 border border-slate-300 px-2 w-full rounded"
               type="email"
@@ -41,7 +46,9 @@ const Login: React.FC = () => {
             />
           </span>
           <span className="flex flex-col gap-0.5">
-            <label htmlFor="password-input" className="text-lg">Пароль</label>
+            <label htmlFor="password-input" className="text-lg">
+              Пароль
+            </label>
             <input
               className="h-9 border border-slate-300 px-2 w-full rounded"
               type="password"
@@ -67,8 +74,6 @@ const Login: React.FC = () => {
           </p>
         </div>
       </form>
-
-      
     </section>
   );
 };

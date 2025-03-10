@@ -9,6 +9,8 @@ import Courts from './pages/Courts.tsx'
 import Login from './pages/Login.tsx'
 import { store  } from './store/store.ts'
 import SignUp from './pages/SignUp.tsx'
+import ProtectedRoute from './components/ProtectedRoute.tsx'
+import AdminDashboard from './components/AdminDashboard.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -21,6 +23,12 @@ createRoot(document.getElementById('root')!).render(
             <Route path='signup' element={<SignUp/>}/>
             <Route path='courts' element={<Courts/>}/>
           </Route>
+          <Route path='/admin' element={
+              <ProtectedRoute role="admin">
+                <AdminDashboard />
+              </ProtectedRoute>
+            }>
+            </Route>
         </Routes>
       </BrowserRouter>
     </Provider>
