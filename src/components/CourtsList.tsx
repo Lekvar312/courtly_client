@@ -32,7 +32,7 @@ const [error, setError] = useState<string| null> (null)
           <CourtCard key= {court._id} court={court}/>
         ))}
       </ul>
-    ) : (<h2 className='text-center mt-16 text-4xl pt-1/2 align-middle capitalize'>заваентаження...</h2>)}
+    ) : (<h2 className='text-center mt-16 text-4xl pt-1/2 align-middle capitalize'>завантаження...</h2>)}
     </>
   );
 }
