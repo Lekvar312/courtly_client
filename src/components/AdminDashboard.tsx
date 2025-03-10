@@ -1,8 +1,17 @@
-import React from 'react'
+import { useState } from "react"
+import AdminSideBar from "./AdminSideBar"
 
 const AdminDashboard = () => {
+  const [isDashboardOpen, setIsDashboardOpen] = useState<boolean>(false)
+
+  const handleDashboardClick = () => {
+    setIsDashboardOpen((prev) => !prev)
+  }
+
   return (
-    <div>AdminDashboard</div>
+    <section className='fixed inset-0 w-full h-full p-2.5 '>
+      <AdminSideBar isOpen={isDashboardOpen} handleDashboard={handleDashboardClick} />
+    </section>
   )
 }
 
