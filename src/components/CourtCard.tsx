@@ -9,8 +9,8 @@ const CourtCard:React.FC<CourtCardProps> = ({court}) => {
   return (
   <li 
       key={court._id}
-      className='w-full md:w-89 mb-3 md:mb-6 cursor-pointer transition-all shadow-2xl hover:scale-105 min-h-80 overflow-hidden rounded md:rounded-2xl'>
-      <article className='border-1  h-full border-gray-300  flex justify-between flex-col gap-2.5'>
+      className='w-full md:w-89 mb-3 md:mb-6 cursor-pointer transition-all shadow-2xl hover:scale-105 h-80 overflow-hidden rounded md:rounded-2xl'>
+      <article className='border-1  h-full border-gray-300 flex flex-col justify-between'>
         <img className='w-full h-40 object-cover' src={`${import.meta.env.VITE_BASE_URL + court.picture}`} alt={court.name} />
         <div className='px-4'>
           <h2 className='md:text-lg text-xl font-bold  capitalize  text-center'>{court.name}</h2>
