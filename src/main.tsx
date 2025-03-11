@@ -10,7 +10,8 @@ import Login from './pages/Login.tsx'
 import { store  } from './store/store.ts'
 import SignUp from './pages/SignUp.tsx'
 import ProtectedRoute from './components/ProtectedRoute.tsx'
-import AdminDashboard from './components/AdminDashboard.tsx'
+import Dashboard from './components/Dashboard.tsx'
+import DashboardUsers from './components/DashboardUsers.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -23,12 +24,16 @@ createRoot(document.getElementById('root')!).render(
             <Route path='signup' element={<SignUp/>}/>
             <Route path='courts' element={<Courts/>}/>
           </Route>
-          <Route path='/admin' element={
+          <Route
+            path='/admin'
+            element={
               <ProtectedRoute role="admin">
-                <AdminDashboard />
+                <Dashboard />
               </ProtectedRoute>
-            }>
-            </Route>
+            }
+          >
+            <Route path='users' element={<DashboardUsers />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </Provider>

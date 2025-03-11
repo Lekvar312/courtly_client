@@ -14,7 +14,7 @@ const ProtectedRoute = ({ children, role }: ProtectedRouteProps) => {
   const { user, token, loading } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
-    if (token && user) {
+    if (token && !user) {
       dispatch(getCurrentUser());
     }
   }, [token, user, dispatch]);
