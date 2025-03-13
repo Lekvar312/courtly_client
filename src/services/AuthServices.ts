@@ -10,18 +10,17 @@ export const logoutService = async () => {
   localStorage.removeItem("accessToken")
 }
 
-
 export const getCurrentUserService = async () => {
   const token = localStorage.getItem("accessToken");
   if (!token) throw new Error("Token is missing");
-  const response = await axiosInstance.get("/users/current", {
+  const {data} = await axiosInstance.get("/users/current", {
     headers: { Authorization: `Bearer ${token}` },
   });
-  console.log("Current User:", response.data); 
-  return response;
+  console.log("Current User:", data); 
+  return data;
 };
 
 export const signupService = async (credentials: {name: string, email:string, password:string}) => {
-  const response = await axiosInstance.post('auth/signup', credentials)
-  return response.data
+  const {data} = await axiosInstance.post('auth/signup', credentials)
+  return data
 }

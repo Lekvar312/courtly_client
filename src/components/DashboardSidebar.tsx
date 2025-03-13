@@ -8,7 +8,7 @@ interface AdminSideBar {
   handleDashboard: () => void
 }
 
-const DashboardSidebar = ({isOpen, handleDashboard}: AdminSideBar) => {
+const DashboardSidebar:React.FC<AdminSideBar> = ({isOpen, handleDashboard}) => {
 
   return (
     <aside className={`border-1 p-2 flex gap-9 flex-col transition-all border-slate-200 rounded shadow-2xl h-full ${isOpen ? "w-2xs" : 'w-16'}`}>

@@ -17,3 +17,14 @@ export const deleteUser = async (id:string) => {
     
   }
 }
+
+
+export const editUser = async (id: string, updatedUser:{name: string, email:string, role:string }) => {
+  try {
+    const response = await axiosInstance.put(`/users/${id}`, updatedUser)
+    console.log(response + "Користувач успішно змінений")
+    return response.data
+  } catch (error) {
+    console.log(error)
+  }
+}

@@ -24,14 +24,12 @@ createRoot(document.getElementById('root')!).render(
             <Route path='signup' element={<SignUp/>}/>
             <Route path='courts' element={<Courts/>}/>
           </Route>
-          <Route
-            path='/admin'
-            element={
-              <ProtectedRoute role="admin">
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          >
+
+          <Route path='/admin' element={
+            <ProtectedRoute role="admin">
+              <Dashboard />
+            </ProtectedRoute>
+          }>
             <Route path='users' element={<DashboardUsers />} />
           </Route>
         </Routes>

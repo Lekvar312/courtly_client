@@ -10,14 +10,15 @@ const [courts, setCourts] = useState<Court[]>([]);
 const [error, setError] = useState<string| null> (null)
 
   useEffect(() => {
-    fetchCourts()
-      .then((response) => {
-        if(response) setCourts(response)
-      })
-      .catch((error) => {
-        console.error("Помилка при заваентаження майданчиків", error)
-        setError("Не вдалося завантажити данні, спробуйте пізніше")
-      })
+    const getData = async () => {
+      try {
+        const data = await fetchCourts() 
+        setCourts(data)
+      } catch (error ) {
+        setError("Не вдалося завантажити дані, спробуйте пізніше ...")
+      }
+    }
+    getData()
   },[]);
 
   return (

@@ -8,16 +8,18 @@ interface TableColumn {
 interface TableProps {
   columns: TableColumn[]
   data: any[]
-  onEdit: (id:string) => void
+  onEdit: (user: any) => void
   onDelete: (id:string) => void
 }
 
 const DashboardTable = ({ columns, data, onDelete, onEdit }: TableProps) => {
+
   if (!data || data.length === 0) {
     return <div>Немає даних для відображення</div>
   }
 
   return (
+    <>
     <table className="table-auto min-w-full shadow-lg rounded-2xl overflow-hidden">
       <thead className='bg-sky-500 text-white text-center text-lg font-medium'>
         <tr>
@@ -39,7 +41,7 @@ const DashboardTable = ({ columns, data, onDelete, onEdit }: TableProps) => {
             ))}
             <td className=' ont-medium px-4 py-2 border border-gray-200'>
               <div className='flex justify-center items-center gap-3'>
-                <TableActionButtons onEdit={() => onEdit(row._id)}/>
+                <TableActionButtons onEdit={() => onEdit(row)}/>
                 <TableActionButtons onDelete={() => onDelete(row._id)} />
               </div>
             </td>
@@ -47,6 +49,7 @@ const DashboardTable = ({ columns, data, onDelete, onEdit }: TableProps) => {
         ))}
       </tbody>
     </table>
+  </>
   )
 }
 

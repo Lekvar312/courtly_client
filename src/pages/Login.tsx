@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { loginUser } from "../store/userSlice";
 import { AppDispatch, RootState } from "../store/store";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 const Login: React.FC = () => {
@@ -10,12 +10,13 @@ const Login: React.FC = () => {
   const { loading, error } = useSelector((state: RootState) => state.user);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-
+  const navigate = useNavigate()
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     dispatch(loginUser({ email, password }));
     setEmail("");
     setPassword("");
+    navigate("/")
   };
 
   return (

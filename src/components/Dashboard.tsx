@@ -8,7 +8,7 @@ const Dashboard = () => {
   const handleDashboardClick = () => {
     setIsDashboardOpen((prev) => !prev)
   }
-
+  
   return (
     <section className='fixed inset-0 w-full flex gap-6 h-full p-2.5 '>
       <DashboardSidebar isOpen={isDashboardOpen} handleDashboard={handleDashboardClick} />
