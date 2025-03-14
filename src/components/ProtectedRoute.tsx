@@ -1,26 +1,46 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import { getCurrentUser } from "../store/userSlice";
-import { AppDispatch, RootState } from "../store/store";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
+import { getCurrentUserService } from "../services/AuthServices"; // імпортуємо сервіс
 
 interface ProtectedRouteProps {
-  children: React.ReactNode;
-  role: string;  
+  role?: string
+  children: React.ReactNode
 }
 
-const ProtectedRoute = ({ children, role }: ProtectedRouteProps) => {
-  const dispatch = useDispatch<AppDispatch>();
-  const { user, token, loading } = useSelector((state: RootState) => state.user);
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ role, children }) => {
+  const { user, loading: loadingRedux } = useSelector((state: RootState) => state.user);
+  const [loading, setLoading] = useState(true); // для локального стану завантаження
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
   useEffect(() => {
-    if (token && !user) {
-      dispatch(getCurrentUser());
+    if (!user && !loadingRedux) {
+      // Якщо користувач ще не завантажений
+      getCurrentUserService()
+        .then((data) => {
+          setCurrentUser(data); // Зберігаємо користувача в локальний стейт
+          setLoading(false); // Завантаження завершено
+        })
+        .catch((error) => {
+          console.error("Не вдалося отримати користувача", error);
+          setLoading(false); // Завантаження завершено навіть з помилкою
+        });
+    } else if (user) {
+      setCurrentUser(user); // Якщо користувач вже є в Redux
+      setLoading(false);
     }
-  }, [token, user, dispatch]);
+  }, [user, loadingRedux]);
 
-  if (!token || (user && user.role !== role)) return <Navigate to="/login" replace />;
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div>Перевірка доступу...</div>;
+
+  if (!currentUser) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (role && currentUser.role !== role) {
+    return <Navigate to="/" replace />;
+  }
 
   return <>{children}</>;
 };

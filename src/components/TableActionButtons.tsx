@@ -5,7 +5,7 @@ interface TableActionButton {
   onEdit?: () => void,
 }
 
-const TableActionButtons = ({onDelete, onEdit}: TableActionButton) => {
+const TableActionButtons:React.FC<TableActionButton> = ({onDelete, onEdit}) => {
   return (
       <>
         {onEdit && (<button onClick={onEdit} className='bg-yellow-400 p-2 cursor-pointer hover:scale-105 transition-all rounded text-white'><Edit size={20}/></button>)}

@@ -1,6 +1,6 @@
 
 import DashboardSidebarItems from "./DashboardSidebarItems"
-import {Menu, Users, Volleyball, ListCheck, ClipboardType } from "lucide-react"
+import {Menu, Users, Volleyball, ListCheck } from "lucide-react"
 import { Link } from "react-router-dom"
 
 interface AdminSideBar {
@@ -8,7 +8,7 @@ interface AdminSideBar {
   handleDashboard: () => void
 }
 
-const DashboardSidebar = ({isOpen, handleDashboard}: AdminSideBar) => {
+const DashboardSidebar:React.FC<AdminSideBar> = ({isOpen, handleDashboard}) => {
 
   return (
     <aside className={`border-1 p-2 flex gap-9 flex-col transition-all border-slate-200 rounded shadow-2xl h-full ${isOpen ? "w-2xs" : 'w-16'}`}>
@@ -23,9 +23,10 @@ const DashboardSidebar = ({isOpen, handleDashboard}: AdminSideBar) => {
         <Link to={"users"}>
           <DashboardSidebarItems icon={<Users/>} isOpen={isOpen}> Користувачі</DashboardSidebarItems>
         </Link>
-        <DashboardSidebarItems icon={<ListCheck />} isOpen={isOpen}> Бронювання </DashboardSidebarItems>
-        <DashboardSidebarItems icon={<Volleyball/>} isOpen={isOpen}> Майданчики</DashboardSidebarItems>
-        <DashboardSidebarItems icon={<ClipboardType/>} isOpen={isOpen}> Типи Майданчиків</DashboardSidebarItems>
+        <Link to={"courts"}>
+          <DashboardSidebarItems icon={<Volleyball/>} isOpen={isOpen}> Майданчики</DashboardSidebarItems>
+        </Link>
+          <DashboardSidebarItems icon={<ListCheck />} isOpen={isOpen}> Бронювання </DashboardSidebarItems>
       </ul>
     </nav>
 </aside>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { Link, useNavigate } from "react-router-dom";
+import { Link,} from "react-router-dom";
 import { AppDispatch, RootState } from "../store/store";
 import { signupUser } from "../store/userSlice";
 
@@ -11,7 +11,6 @@ const SignUp = () => {
   const [password, setPassword] = useState<string>("");
 
   const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
 
   const { loading, error } = useSelector((state: RootState) => state.user);
 
@@ -39,7 +38,7 @@ const SignUp = () => {
         <div className="w-full px-6 flex flex-col justify-center gap-3 sm:gap-5">
           <span className="flex flex-col gap-0.5">
             <label htmlFor="password-input" className="text-base sm:text-lg">
-              Пароль
+              Ім`я
             </label>
             <input
               className="h-9 border border-slate-300 px-2 w-full rounded"
