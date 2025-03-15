@@ -21,7 +21,7 @@ const DashboardTable = ({ columns, data, onDelete, onEdit }: TableProps) => {
   return (
     <>
     <table className="table-auto min-w-full shadow-lg rounded-2xl overflow-hidden">
-      <thead className='bg-stone-400 text-white text-center text-lg font-medium'>
+      <thead className='bg-linear-to-r from-sky-500 to-teal-500 text-white text-center text-lg font-medium'>
         <tr>
           {columns.map((column) => (
             <th key={column.key} className="border-2 border-white  px-4 py-2">

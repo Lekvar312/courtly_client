@@ -9,7 +9,7 @@ type SideBarItem = {
 const AdminSideBarItems:React.FC<SideBarItem> = ({children, icon, isOpen}) => {
   return (
     <li 
-      className={`bg-gray-500 hover:bg-gray-700 text-white transition-all  py-1.5 text-center rounded text-xl cursor-pointer flex items-center justify-center gap-2.5`}>
+      className={`bg-sky-500 hover:bg-sky-700 text-white transition-all  py-1.5 text-center rounded text-xl cursor-pointer flex items-center justify-center gap-2.5`}>
       {icon}
       {isOpen &&
         <span>

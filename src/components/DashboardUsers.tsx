@@ -7,7 +7,7 @@ import ModalView from './ModalView'
 
 const columns = [
   { key: '_id', label: 'ID' },
-  { key: 'name', label: 'Ім\'я' },
+  { key: 'name', label: 'Ім`я' },
   { key: 'email', label: 'Email' },
   { key: 'role', label: 'Роль' },
 ]
@@ -24,12 +24,13 @@ const DashboardUsers = () => {
   const [showModal, setShowModal] = useState<boolean>(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
 
-  const fetchUsers = async () => {
-    const response = await getAllUsers()
-    setUsers(response)
-  }
+
   useEffect(()=> {
-    fetchUsers()
+    const fetchUsers = async () => {
+      const response = await getAllUsers()
+      setUsers(response)
+    } 
+  fetchUsers()   
   },[])
   
   const handleDelete = async (id:string) => {
@@ -51,7 +52,7 @@ const DashboardUsers = () => {
       <h2 className='text-2xl font-bold'>Панель Адміністратора: Користувачі</h2>
       <DashboardTable onDelete={handleDelete} onEdit={handleEdit} columns={columns} data={users || []} />
       {showModal && createPortal(
-            <ModalView onClose={() => setShowModal(false)}> <UserEditModal onClose ={(() => setShowModal(false))} onUpdate = {fetchUsers} user={selectedUser} /> </ModalView> , document.body
+            <ModalView onClose={() => setShowModal(false)}> <UserEditModal user={selectedUser}/></ModalView> , document.body
           )}
     </>
   )

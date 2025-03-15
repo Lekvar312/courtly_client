@@ -12,6 +12,7 @@ import SignUp from './pages/SignUp.tsx'
 import ProtectedRoute from './components/ProtectedRoute.tsx'
 import Dashboard from './components/Dashboard.tsx'
 import DashboardUsers from './components/DashboardUsers.tsx'
+import DashboardCourts from './components/DashboardCourts.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -33,6 +34,7 @@ createRoot(document.getElementById('root')!).render(
             }
           >
             <Route path='users' element={<DashboardUsers />} />
+            <Route path='courts' element={<DashboardCourts/>} />
           </Route>
         </Routes>
       </BrowserRouter>

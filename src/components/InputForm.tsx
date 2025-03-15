@@ -11,7 +11,7 @@ type Input = {
 const InputForm :React.FC<Input> = ({onChange, type="text", placeholder, label, value} ) => {
   return (
     <span className='flex flex-col'>
-      <label htmlFor="email-input" className='font-medium'>{label}</label>
+      <label htmlFor="email-input" className='font-lg'>{label}</label>
       <input className='border border-slate-400 rounded p-1.5 text-base focus:ring-1 focus:ring-purple-800 focus:outline-none transition-all'
         placeholder={placeholder} 
         type={type} 

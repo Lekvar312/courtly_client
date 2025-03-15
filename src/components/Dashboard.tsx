@@ -10,12 +10,12 @@ const Dashboard = () => {
   }
   
   return (
-    <section className='fixed inset-0 w-full flex gap-6 h-full p-2.5 '>
+    <main className='fixed inset-0 w-full flex gap-6 h-full p-2.5 '>
       <DashboardSidebar isOpen={isDashboardOpen} handleDashboard={handleDashboardClick} />
-      <div className="w-full flex flex-col gap-10 h-full p-2 ">
+      <section className="w-full flex flex-col gap-10 h-full p-2 ">
         <Outlet />
-      </div>
-    </section>
+      </section>
+    </main>
   )
 }
 

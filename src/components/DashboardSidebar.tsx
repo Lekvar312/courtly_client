@@ -21,12 +21,12 @@ const DashboardSidebar:React.FC<AdminSideBar> = ({isOpen, handleDashboard}) => {
     <nav className="">
       <ul className='flex flex-col gap-3'>
         <Link to={"users"}>
-          <DashboardSidebarItems icon={<Users/>} isOpen={isOpen}> Користувачі</DashboardSidebarItems>
+          <DashboardSidebarItems icon={<Users strokeWidth={2}/>} isOpen={isOpen}> Користувачі</DashboardSidebarItems>
         </Link>
         <Link to={"courts"}>
-          <DashboardSidebarItems icon={<Volleyball/>} isOpen={isOpen}> Майданчики</DashboardSidebarItems>
+          <DashboardSidebarItems icon={<Volleyball strokeWidth={2}/>} isOpen={isOpen}> Майданчики</DashboardSidebarItems>
         </Link>
-          <DashboardSidebarItems icon={<ListCheck />} isOpen={isOpen}> Бронювання </DashboardSidebarItems>
+          <DashboardSidebarItems icon={<ListCheck  strokeWidth={2}/>} isOpen={isOpen}> Бронювання </DashboardSidebarItems>
       </ul>
     </nav>
 </aside>

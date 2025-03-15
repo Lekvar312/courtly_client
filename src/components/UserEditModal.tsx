@@ -5,8 +5,6 @@ import Select from './Select';
 
 type Modal = {
   user: User | null
-  onUpdate: () => void
-  onClose: () => void
 }
 
 type Actions = 
@@ -52,7 +50,7 @@ const reducer = (state: User, action: Actions) => {
   }
 }
 
-const UserEditModal: React.FC<Modal> = ({user, onUpdate}) => {
+const UserEditModal: React.FC<Modal> = ({user}) => {
   
   if(!user || !user._id) return null
   const [state, dispatch] = useReducer(reducer, initialState(user))
@@ -61,14 +59,13 @@ const UserEditModal: React.FC<Modal> = ({user, onUpdate}) => {
     if(!user) return 
     try {
       await editUser(state._id!, state)
-      onUpdate()
     } catch (error: any) {
       console.log(error)
     }
   }
 
   return (
-      <form className='text-lg flex flex-col gap-5'>
+      <form onSubmit={handleEdit} className='text-lg flex flex-col gap-5'>
         <h1 className='text-lg font-bold'>Редагування Користувача</h1>
         <div className='flex flex-col gap-2'>
           <InputForm label='Ім`я' onChange={(e) => dispatch({type:"SET_NAME", payload: e.target.value})} value={state.name} placeholder='Введіть ім`я'/>
@@ -76,7 +73,7 @@ const UserEditModal: React.FC<Modal> = ({user, onUpdate}) => {
           <Select label="Роль" value={state.role} options={["admin", "user"]} onChange= {(e) => dispatch({type: "SET_ROLE", payload: e.target.value})}/>
           </div>
             <span className='flex items-end justify-end gap-2'>
-              <button type='button' onClick={handleEdit} className='  text-base p-1 transition-all text-black  font-medium cursor-pointer hover:bg-yellow-400 hover:text-white rounded'>Редагувати</button>
+              <button type='submit' className='text-base p-1.5 transition-all  font-medium cursor-pointer hover:scale-105 bg-yellow-400 text-white rounded'>Редагувати</button>
             </span>
         </form>
   )
