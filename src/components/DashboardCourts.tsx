@@ -2,6 +2,7 @@ import {useState, useEffect} from 'react'
 import { fetchCourts } from '../services/CourtsService'
 import { Court } from '../type'
 import DashboardTable from './DashboardTable'
+import CourtTypes from './CourtTypes'
 
 const columns = [
   {key:"_id", label: "ID"},
@@ -12,8 +13,12 @@ const columns = [
   {key:"picture", label: "Зображення"},
 ]
 
+
+
+
 const DashboardCourts = () => {
   const [courts, setCourts] = useState<Court[] | null>(null)
+
 
   useEffect(() => {
     const getData = async () => {
@@ -27,6 +32,7 @@ const DashboardCourts = () => {
   return (
     <>
       <h2 className='text-2xl font-bold'>Панель Адміністратора: Спортивні Майданчики </h2>
+      <CourtTypes />
       <DashboardTable columns={columns} data={courts || []} onDelete={() => {}} onEdit={() => {}} />
     </>
   )

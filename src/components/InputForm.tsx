@@ -5,7 +5,7 @@ type Input = {
   type?: string,
   placeholder: string, 
   label: string,
-  value: string
+  value?: string
 }
 
 const InputForm :React.FC<Input> = ({onChange, type="text", placeholder, label, value} ) => {
