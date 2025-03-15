@@ -17,7 +17,7 @@ const InputForm :React.FC<Input> = ({onChange, type="text", placeholder, label, 
         type={type} 
         value={value}
         onChange={onChange}/>
-  </span>
+    </span>
   )
 }
 

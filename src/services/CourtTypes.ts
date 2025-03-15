@@ -17,3 +17,21 @@ export const createCourtType = async (name:string) => {
     console.log(error)
   }
 }
+
+export const editCourtType = async (id: string, name: string) => {
+  try {
+    const response = await axiosInstance.put(`/courtType/${id}`, { name });
+    return response.data
+  } catch (error) {
+    console.log(error) 
+  }
+}
+
+export const deleteCourtType = async (id: string) => {
+  try {
+    const response = await axiosInstance.delete(`courtType/${id}`)
+    return response
+  } catch (error) {
+    console.log(error)
+  }
+}
