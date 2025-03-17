@@ -117,10 +117,10 @@ const CourtTypes = () => {
         <span>Типи майданчиків</span> {state.dropDownMenu ? <ChevronUp /> : <ChevronDown />}
       </button>
       {state.dropDownMenu && (
-        <ul className='absolute top-full overflow-y-auto left-0 mt-1 w-full max-h-56 text-black p-2 bg-gray-300 shadow-lg rounded z-10 flex flex-col gap-2 '>
+        <ul className='absolute top-full overflow-y-auto left-0 mt-1 w-full max-h-56 text-black p-2 bg-gray-100 shadow-lg rounded z-10 flex flex-col gap-2 '>
           {state.courtTypes.map(type => (
-            <li key={type._id} className='p-1 font-medium text-base flex items-center justify-between  bg-white rounded '>
-              <h4 >{type.name}</h4> 
+            <li key={type._id} className='p-1 font-medium text-base flex items-center justify-between hover:bg-gray-200 bg-white rounded '>
+              <h4 className='truncate w-40' >{type.name}</h4> 
               <span className='flex gap-1.5'>
                 <TableActionButtons onEdit={() => handleEdit(type)}/>
                 <TableActionButtons onDelete={() => handleDelete(type._id)}/>

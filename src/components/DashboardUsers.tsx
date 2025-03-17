@@ -11,6 +11,7 @@ const columns = [
   { key: 'email', label: 'Email' },
   { key: 'role', label: 'Роль' },
 ]
+
 interface User {
   _id?:string,
   name:string,

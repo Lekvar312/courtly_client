@@ -1,12 +1,15 @@
 export interface Court {
   _id?:string,
   name: string,
-  type: string,
+  type: {
+    _id: string,
+    name: string,
+  },
   address: string,
   workingHours: {
     startTime: string,
     endTime: string,
   }
-  price: number,
-  picture:string
+  price: string,
+  picture:string | File | null
 }
