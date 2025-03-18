@@ -34,21 +34,36 @@ export const deleteCourt = async (id: string) => {
   }
 }
 
-export const createCourt = async (courtData: Court) => {
-  try {
-    console.log("Working Hours:", courtData.workingHours);
+type Data = {
+  _id?:string,
+  name: string,
+  type: string
+  address: string,
+  workingHours: {
+    startTime: string,
+    endTime: string,
+  }
+  price: string,
+  picture:string | File | null
+}
 
+export const createCourt = async (courtData: Data) => {
+  try {
     const formData = new FormData();
 
     formData.append("name", courtData.name);
     formData.append("address", courtData.address);
     formData.append("price", courtData.price);
-    formData.append("type", courtData.type.name);
+    formData.append("type", courtData.type);
     formData.append("workingHours.startTime", courtData.workingHours.startTime);
     formData.append("workingHours.endTime", courtData.workingHours.endTime);
 
     if (courtData.picture) {
-      formData.append("picture", courtData.picture);
+      if (courtData.picture instanceof FileList && courtData.picture.length > 0) {
+        formData.append("picture", courtData.picture[0]); 
+      } else if (courtData.picture instanceof File) {
+        formData.append("picture", courtData.picture); 
+      }
     }
 
     const { data } = await axiosInstance.post('/courts', formData, {
@@ -56,8 +71,9 @@ export const createCourt = async (courtData: Court) => {
         'Content-Type': 'multipart/form-data',
       },
     });
-
+    console.log(data)
     return data;
+    
   } catch (error) {
     if (error instanceof AxiosError) {
       console.error("Помилка при створенні майданчика:", error.response?.data || error.message);

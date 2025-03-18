@@ -6,7 +6,7 @@
   import { createPortal } from 'react-dom'
   import ModalView from './ModalView'
   import { getAllTypes } from '../services/CourtTypes'
-import CourtsCreateForm from './CourtsCreateForm'
+  import CourtsCreateForm from './CourtsCreateForm'
 
   const columns = [
     {key:"_id", label: "ID"},
@@ -28,21 +28,19 @@ import CourtsCreateForm from './CourtsCreateForm'
     showModal: boolean,
     selectedCourt: Court | null,
     types: Type[]
-
   }
 
   type Actions = 
   | {type: "SET_COURTS", payload: Court[]}
   | {type: "SET_SHOW_MODAL", payload: boolean}
-  | {type: "SET_EDIT", payload: {court: Court, showModal: boolean}}
+  | {type: "SET_EDIT", payload: {selectedCourt: Court, showModal: boolean}}
   | {type: "GET_TYPES", payload: Type[]}
 
   const initialState: State = {
     courts: [],
     showModal: false,
     selectedCourt: null,
-    types: []
-
+    types: [],
   }
 
   const reducer = (state: State, action: Actions) => {
@@ -62,7 +60,7 @@ import CourtsCreateForm from './CourtsCreateForm'
       case "SET_EDIT": {
         return {
           ...state, 
-          selectedCourt: action.payload.court,
+          selectedCourt: action.payload.selectedCourt,
           showModal: action.payload.showModal,
         }
       }
@@ -77,16 +75,28 @@ import CourtsCreateForm from './CourtsCreateForm'
   }
 
   const DashboardCourts = () => {
+
     const [state, dispatch] = useReducer(reducer, initialState)
+
     useEffect(() => {
       const getData = async () => {
         const courtsResponse = await fetchCourts()
         const typesResponse = await getAllTypes ()
+        console.log(typesResponse)
         dispatch({type:"SET_COURTS", payload: courtsResponse})
         dispatch({type:"GET_TYPES", payload:typesResponse})
       }
       getData()
     },[])
+
+    const handleEditCourt = (row: Court) => {
+    }
+    
+    const handleCreateCourt = (newCourt: Court) => {
+      console.log("Новий майданчик додано:", newCourt);
+      dispatch({type:"SET_COURTS", payload: [...state.courts, newCourt]});
+      
+    }
 
     const handleDelete = async (id: string) => {
       try {
@@ -103,15 +113,14 @@ import CourtsCreateForm from './CourtsCreateForm'
         <h2 className='text-2xl font-bold'>Панель Адміністратора: Спортивні Майданчики </h2>
 
         <div className='flex justify-between'>
-        <CourtTypes />
+        <CourtTypes/>
         <button onClick={() => dispatch({type:"SET_SHOW_MODAL", payload:true})} className='bg-green-500 cursor-pointer text-white px-2 rounded text-lg font-normal'>Додати Майданчик</button>
         </div>
-        <DashboardTable columns={columns} data={state.courts || []} onDelete={handleDelete} onEdit={() => {}} />
-
+        <DashboardTable columns={columns} data={state.courts || []} onDelete={handleDelete} onEdit={handleEditCourt} />
         {state.showModal && 
         createPortal(
           <ModalView onClose={() => dispatch({type:"SET_SHOW_MODAL", payload: false})}>
-            <CourtsCreateForm types={state.types}/>
+            <CourtsCreateForm types={state.types.map(type => type.name)} onCreate={handleCreateCourt}/>
           </ModalView>, document.body
         )}
       </>

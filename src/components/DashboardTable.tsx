@@ -39,7 +39,7 @@ const DashboardTable = ({ columns, data, onDelete, onEdit }: TableProps) => {
                 {column.key === "picture" ? (
                   <img
                     src={import.meta.env.VITE_BASE_URL + row[column.key]}
-                    className="w-full h-28 rounded object-cover"
+                    className="w-full h-28 w- rounded object-cover"
                     alt="picture"
                   />
                 ) : column.key === "workingHours" && row[column.key] ? (

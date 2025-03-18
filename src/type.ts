@@ -1,10 +1,7 @@
 export interface Court {
   _id?:string,
   name: string,
-  type: {
-    _id: string,
-    name: string,
-  },
+  type: CourtType
   address: string,
   workingHours: {
     startTime: string,
@@ -12,4 +9,9 @@ export interface Court {
   }
   price: string,
   picture:string | File | null
+}
+
+export interface CourtType {
+  _id: string,
+  name: string,
 }

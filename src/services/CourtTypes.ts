@@ -30,6 +30,7 @@ export const editCourtType = async (id: string, name: string) => {
 export const deleteCourtType = async (id: string) => {
   try {
     const response = await axiosInstance.delete(`courtType/${id}`)
+    console.log(response.data)
     return response
   } catch (error) {
     console.log(error)
