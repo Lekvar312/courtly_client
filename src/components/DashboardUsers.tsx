@@ -43,17 +43,26 @@ const DashboardUsers = () => {
     }
   }
 
-  const handleEdit= (user: User) => {
-    setSelectedUser(user)
-    setShowModal(true)
-  }
+  const handleEdit = (user: User) => {
+    setSelectedUser(user);
+    setShowModal(true);
+  };
+
+  const handleUpdateUser = (updatedUser: User) => {
+    setUsers((prevUsers) => {
+      const updatedUsers = prevUsers?.map((user) =>
+        user._id === updatedUser._id ? updatedUser : user
+      );
+      return updatedUsers || [];
+    });
+  };
 
   return (
     <>
       <h2 className='text-2xl font-bold'>Панель Адміністратора: Користувачі</h2>
       <DashboardTable onDelete={handleDelete} onEdit={handleEdit} columns={columns} data={users || []} />
       {showModal && createPortal(
-            <ModalView onClose={() => setShowModal(false)}> <UserEditModal user={selectedUser}/></ModalView> , document.body
+            <ModalView onClose={() => setShowModal(false)}> <UserEditModal onUpdate = {handleUpdateUser} user={selectedUser}/></ModalView> , document.body
           )}
     </>
   )

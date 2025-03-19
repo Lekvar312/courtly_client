@@ -11,8 +11,8 @@ export const getAllTypes = async () => {
 
 export const createCourtType = async (name:string) => {
   try {
-    const response = await axiosInstance.post("/courtType", {name} )
-    return response
+    const {data} = await axiosInstance.post("/courtType", {name} )
+    return {data}
   } catch (error) {
     console.log(error)
   }
@@ -21,11 +21,13 @@ export const createCourtType = async (name:string) => {
 export const editCourtType = async (id: string, name: string) => {
   try {
     const response = await axiosInstance.put(`/courtType/${id}`, { name });
-    return response.data
+    return response; 
   } catch (error) {
-    console.log(error) 
+    console.log("Помилка при редагуванні типу майданчика:", error);
+    return null; 
   }
-}
+};
+
 
 export const deleteCourtType = async (id: string) => {
   try {

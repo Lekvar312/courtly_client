@@ -1,7 +1,10 @@
 export interface Court {
   _id?:string,
   name: string,
-  type: CourtType
+  type: {
+    _id:string,
+    name: string,
+  },
   address: string,
   workingHours: {
     startTime: string,

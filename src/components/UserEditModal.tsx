@@ -5,6 +5,7 @@ import Select from './Select';
 
 type Modal = {
   user: User | null
+  onUpdate: (updatedUser: User) => void
 }
 
 type Actions = 
@@ -50,19 +51,24 @@ const reducer = (state: User, action: Actions) => {
   }
 }
 
-const UserEditModal: React.FC<Modal> = ({user}) => {
+const UserEditModal: React.FC<Modal> = ({user, onUpdate}) => {
   
   if(!user || !user._id) return null
   const [state, dispatch] = useReducer(reducer, initialState(user))
 
-  const handleEdit = async () => {
-    if(!user) return 
+  const handleEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
     try {
-      await editUser(state._id!, state)
+      const updatedUser = await editUser(state._id!, state);
+      onUpdate(updatedUser.user); 
     } catch (error: any) {
-      console.log(error)
     }
-  }
+  };
+  
+  
+
+  
 
   return (
       <form onSubmit={handleEdit} className='text-lg flex flex-col gap-5'>
@@ -72,9 +78,7 @@ const UserEditModal: React.FC<Modal> = ({user}) => {
           <InputForm label='Пошта' onChange={(e) => dispatch({type:"SET_EMAIL", payload: e.target.value})} value={state.email} placeholder='Введіть Пошту'/>
           <Select label="Роль" value={state.role} options={["admin", "user"]} onChange= {(e) => dispatch({type: "SET_ROLE", payload: e.target.value})}/>
           </div>
-            <span className='flex items-end justify-end gap-2'>
-              <button type='submit' className='text-base p-1.5 transition-all  font-medium cursor-pointer hover:scale-105 bg-yellow-400 text-white rounded'>Редагувати</button>
-            </span>
+              <button type='submit' className='text-base p-1.5 transition-all  font-medium cursor-pointer bg-yellow-400 hover:bg-yellow-500 text-white rounded'>Редагувати</button>
         </form>
   )
 }

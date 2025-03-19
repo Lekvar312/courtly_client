@@ -13,24 +13,28 @@ type CourtType = {
 
 type State = {
   courtTypes: CourtType[],
-  dropDownMenu: boolean,
+  isDropdownOpen: boolean,
   newType:string
-  showModal: boolean,
+  isModalOpen: boolean,
   editType: CourtType | null
 }
 
 type Actions = 
   |{type: "SET_COURT_TYPES", payload:CourtType[]}
-  |{type: "SET_DROP_DOWN_MENU", payload: boolean }
-  |{type: "SET_SHOW_MODAL", payload: boolean}
+  |{type: "TOGGLE_DROPDOWN", payload: boolean }
+  |{type: "TOGGLE_MODAL", payload: boolean}
   |{type: "SET_NEW_TYPE", payload: string}
   |{type: "SET_EDIT_TYPE", payload: CourtType | null}
+  |{type: "UPDATE_COURT_TYPE", payload: CourtType}
+  |{type: "CREATE_COURT_TYPE", payload: CourtType}  
+  |{type: "DELETE_COURT_TYPE", payload: string}  
+
 
 const initialState:State = {
   courtTypes: [],
-  dropDownMenu: false,
+  isDropdownOpen: false,
   newType: "",
-  showModal:false,
+  isModalOpen:false,
   editType: null
 }
 
@@ -42,10 +46,10 @@ const reducer = (state: State, action: Actions) => {
         courtTypes: action.payload
       }
     }
-    case "SET_DROP_DOWN_MENU": {
+    case "TOGGLE_DROPDOWN": {
       return {
         ...state, 
-        dropDownMenu: action.payload
+        isDropdownOpen: !state.isDropdownOpen
       }
     }
     case "SET_NEW_TYPE": {
@@ -54,16 +58,36 @@ const reducer = (state: State, action: Actions) => {
         newType: action.payload
       }
     }
-    case "SET_SHOW_MODAL": {
+    case "TOGGLE_MODAL": {
       return {
         ...state,
-        showModal: action.payload
+        isModalOpen: action.payload
       }
     }
     case "SET_EDIT_TYPE": {
       return {
         ...state,
         editType: action.payload
+      }
+    }
+    case "CREATE_COURT_TYPE": {
+      return { 
+        ...state,
+        courtTypes:[...state.courtTypes, action.payload]
+      }
+    }
+    case "UPDATE_COURT_TYPE": {
+      return {
+        ...state,
+        courtTypes: state.courtTypes.map(type =>
+          type._id === action.payload._id ? action.payload : type
+        )
+      }
+    }
+    case "DELETE_COURT_TYPE": {
+      return {
+        ...state, 
+        courtTypes: state.courtTypes.filter(type => type._id !== action.payload)
       }
     }
     default: return state
@@ -78,7 +102,6 @@ const CourtTypes = () => {
       try{
         const response = await getAllTypes()
         dispatch({type: "SET_COURT_TYPES", payload: response})
-        console.log(response)
       }catch(error){
         console.log(error)
       }
@@ -86,25 +109,44 @@ const CourtTypes = () => {
     getCourtTypes()
   },[])
 
+  const openCreateModal = () => {
+    dispatch({type:"TOGGLE_MODAL", payload: true})
+    dispatch({type:"SET_EDIT_TYPE", payload: null})
+    dispatch({type:"SET_NEW_TYPE", payload: ""})
+  }
+
   const handleEdit = (type: CourtType) => {
-    dispatch({type: "SET_EDIT_TYPE", payload: type})
-    dispatch({type: "SET_NEW_TYPE", payload: type.name})
-    dispatch({type: "SET_SHOW_MODAL", payload: true})
+    dispatch({ type: "SET_EDIT_TYPE", payload: type });
+    dispatch({ type: "SET_NEW_TYPE", payload: type.name });
+    dispatch({ type: "TOGGLE_MODAL", payload: true });
   }
 
   const handleSubmit = async () => {
-    if(!state.newType.trim()) return 
-    if(state.editType) {
-      editCourtType(state.editType._id, state.newType)
-    }else {
-      createCourtType(state.newType)
+    if (!state.newType.trim()) return;
+  
+    try {
+      let updatedCourtType;
+      if (state.editType) {
+        updatedCourtType = await editCourtType(state.editType._id, state.newType);
+        if (!updatedCourtType?.data?.courtType) return console.log("Редагування не вдалося");
+        dispatch({ type: "UPDATE_COURT_TYPE", payload: updatedCourtType.data.courtType });
+  
+      } else {
+        const newCourtType = await createCourtType(state.newType);
+        if (!newCourtType?.data?.courtType) return console.log("Створення не вдалося");
+  
+        dispatch({ type: "CREATE_COURT_TYPE", payload: newCourtType.data.courtType });
+      }
+  
+    } catch (error) {
+      console.error("Помилка при збереженні:", error);
     }
-  }
+  };
 
   const handleDelete = async (id: string) => {
     try{
       await deleteCourtType(id)
-      dispatch({type: "SET_COURT_TYPES", payload: state.courtTypes.filter(type => type._id !== id ) })
+      dispatch({type: "DELETE_COURT_TYPE", payload: id })
     }catch(error) {
       console.log(error)
     }
@@ -113,10 +155,10 @@ const CourtTypes = () => {
   return (
     <div className='flex gap-2'>
     <div className='relative flex flex-col w-60 items-start gap-4  bg-sky-500 text-white rounded'>
-      <button onClick={() => dispatch({type: "SET_DROP_DOWN_MENU", payload: !state.dropDownMenu}) } className='flex w-full  p-1 justify-between text-lg font-medium items-center gap-2 cursor-pointer'>
-        <span>Типи майданчиків</span> {state.dropDownMenu ? <ChevronUp /> : <ChevronDown />}
+      <button  onClick={() => dispatch({ type: "TOGGLE_DROPDOWN", payload: !state.isDropdownOpen })} className='flex w-full  p-1 justify-between text-lg font-medium items-center gap-2 cursor-pointer'>
+        <span>Типи майданчиків</span> {state.isDropdownOpen ? <ChevronUp /> : <ChevronDown />}
       </button>
-      {state.dropDownMenu && (
+      {state.isDropdownOpen && (
         <ul className='absolute top-full overflow-y-auto left-0 mt-1 w-full max-h-56 text-black p-2 bg-gray-100 shadow-lg rounded z-10 flex flex-col gap-2 '>
           {state.courtTypes.map(type => (
             <li key={type._id} className='p-1 font-medium text-base flex items-center justify-between hover:bg-gray-200 bg-white rounded '>
@@ -130,16 +172,11 @@ const CourtTypes = () => {
         </ul>
       )}
       </div>
-      <button onClick={() => {
-        dispatch({type: "SET_EDIT_TYPE", payload: null})
-        dispatch({type: "SET_NEW_TYPE", payload: ""})
-        dispatch({type: "SET_SHOW_MODAL", payload: !state.showModal})
-      }
-        } className='bg-green-500 text-white px-2 rounded font-medium cursor-pointer'>Додати</button>
-      {state.showModal &&
+      <button onClick={openCreateModal} className='bg-green-500 text-white px-2 rounded font-medium cursor-pointer'>Додати</button>
+      {state.isModalOpen &&
         createPortal(
           <ModalView 
-            onClose={() => dispatch({type: "SET_SHOW_MODAL", payload: !state.showModal})} >
+            onClose={() => dispatch({ type: "TOGGLE_MODAL", payload: false })} >
             <CourtTypeCreateModal
               onSubmit={handleSubmit}
               value={state.newType}
