@@ -32,9 +32,9 @@ const Header: React.FC = () => {
         <nav
           className={`${
             isMenuOpen ? "flex" : "hidden"
-          } absolute md:static transition-all top-16 left-0 bg-white md:bg-transparent shadow-md md:shadow-none md:flex w-full items-center justify-between`}
+          } absolute md:static transition-all  top-16 left-0 bg-white md:bg-transparent shadow-md md:shadow-none md:flex w-full items-center justify-between`}
         >
-          <ul className="flex  flex-col items-center text-xl pb-2.5 md:pb-0 md:flex-row md:text-lg gap-5 mx-auto">
+          <ul className="flex bg-white flex-col items-center text-xl pb-2.5 md:pb-0 md:flex-row md:text-lg gap-5 mx-auto">
             <li>
               <Link onClick={() => setIsMenuOpen(false)} to="/">
                 Про нас

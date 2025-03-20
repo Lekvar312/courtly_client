@@ -39,13 +39,13 @@ const DashboardTable = ({ columns, data, onDelete, onEdit }: TableProps) => {
                 {column.key === "picture" ? (
                   <img
                     src={import.meta.env.VITE_BASE_URL + row[column.key]}
-                    className="w-full h-28 w- rounded object-cover"
+                    className="w-full h-20 w- rounded object-cover"
                     alt="picture"
                   />
                 ) : column.key === "workingHours" && row[column.key] ? (
                   `${row[column.key]?.startTime ?? "—"} - ${row[column.key]?.endTime ?? "—"}`
                 ) : typeof row[column.key] === "object" && row[column.key] !== null ? (
-                  row[column.key].name ?? "—" // Виводимо name, якщо є
+                  row[column.key].name ?? "—"
                 ) : (
                   row[column.key]
                 )}

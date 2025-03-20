@@ -2,9 +2,11 @@ import  { AxiosError } from "axios"
 import axiosInstance from "../api/axiosInstance"
 import { Court } from "../type"
 
-export const fetchCourts = async (): Promise<Court[]> => {
+export const fetchCourts = async (name:string): Promise<Court[]> => {
   try{
-    const {data} = await axiosInstance.get<Court[]>("/courts")
+    const {data} = await axiosInstance.get<Court[]>("/courts", {
+      params: name ? {name} : {}
+    })
     return data
   }catch(e){
       if(e instanceof AxiosError) {
