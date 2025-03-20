@@ -4,6 +4,8 @@ import DashboardTable from './DashboardTable'
 import UserEditModal from './UserEditModal'
 import { createPortal } from 'react-dom'
 import ModalView from './ModalView'
+import { showToast } from './ToastNotification'
+import { ToastContainer } from 'react-toastify'
 
 const columns = [
   { key: '_id', label: 'ID' },
@@ -38,14 +40,16 @@ const DashboardUsers = () => {
     try {
       await deleteUser(id)
       setUsers((prevUsers) => prevUsers?.filter((user) => user._id !== id) || [])
+      showToast("Користувача успішно видалено", "success")
     } catch (error) {
       console.log(error, "Помилка під час видалення")
+      showToast("Не вдалося видалити користувача", "error")
     }
   }
 
   const handleEdit = (user: User) => {
-    setSelectedUser(user);
-    setShowModal(true);
+      setSelectedUser(user);
+      setShowModal(true);
   };
 
   const handleUpdateUser = (updatedUser: User) => {
@@ -60,6 +64,7 @@ const DashboardUsers = () => {
   return (
     <>
       <h2 className='text-2xl font-bold'>Панель Адміністратора: Користувачі</h2>
+      <ToastContainer />
       <DashboardTable onDelete={handleDelete} onEdit={handleEdit} columns={columns} data={users || []} />
       {showModal && createPortal(
             <ModalView onClose={() => setShowModal(false)}> <UserEditModal onUpdate = {handleUpdateUser} user={selectedUser}/></ModalView> , document.body

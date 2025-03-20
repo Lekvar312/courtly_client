@@ -8,6 +8,8 @@ import ModalView from './ModalView'
 import { getAllTypes } from '../services/CourtTypes'
 import CourtsCreateForm from './CourtsCreateForm'
 import CourtEditForm from './CourtEditForm'
+import { showToast } from './ToastNotification'
+import { ToastContainer } from 'react-toastify'
 
 const columns = [
   {key:"_id", label: "ID"},
@@ -146,7 +148,9 @@ const DashboardCourts = () => {
     try {
       await deleteCourt(id);
       dispatch({ type:"DELETE_COURT", payload: id});
+      showToast("Майданчик успішно видалено", "success")
     } catch (error) { 
+      showToast("Не вдалось видалити майданчик", "error")
       console.error("Помилка при видаленні:", error);
     }
   }
@@ -154,9 +158,10 @@ const DashboardCourts = () => {
   return (
     <>
       <h2 className='text-2xl font-bold'>Панель Адміністратора: Спортивні Майданчики </h2>
+      <ToastContainer />
       <div className='flex justify-between'>
       <CourtTypes/>
-      <button onClick={openCreateModal} className='bg-green-500 cursor-pointer text-white px-2 rounded text-lg font-normal'>Додати Майданчик</button>
+      <button onClick={openCreateModal} className='bg-green-500 hover:bg-green-600 cursor-pointer text-white px-2 rounded text-lg font-normal'>Додати Майданчик</button>
       </div>
       <DashboardTable columns={columns} data={state.courts || []} onDelete={handleDelete} onEdit={openEditModal} />
       {state.isModalOpen && 

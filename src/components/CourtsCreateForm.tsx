@@ -3,6 +3,7 @@ import { Court} from '../type'
 import InputForm from './InputForm'
 import React, {useState} from 'react'
 import {useForm} from 'react-hook-form'
+import { showToast } from './ToastNotification'
 
 type CourtsActionFormProps = {
   types: Type[]
@@ -29,23 +30,23 @@ type FormData = {
 const CourtsCreateForm: React.FC<CourtsActionFormProps> = ({types, onCreate, }) => {
 
   const {register, handleSubmit, formState:{errors}} = useForm<FormData>()
-  const [successMessage, setSuccessMessage] = useState<string | null>()
   const [selectedType, setSelectedType] = useState('');
+
   const onSubmit = async (data: FormData) => {
     try {
     console.log(data)
     const newCourt = await createCourt(data);
     onCreate(newCourt.court)
-    setSuccessMessage("Майданчик успішно створено")
+    showToast("Майданчик успішно створено", "success")
   } catch (error) {
-    setSuccessMessage(null)
     console.log("Помилка при створенні майданчика:", error);
+    showToast("Помилка при створенні майданчика", "error");
   }
 };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-3'>
-      {successMessage ? <p className='text-green-500 font-medium text-xl'>{successMessage}</p> :  <h1 className='text-lg font-bold'>Створити Майданчик</h1>}
+    <h1 className='text-lg font-bold'>Створити Майданчик</h1>
       <div className='flex flex-col gap-2'>
         <InputForm placeholder='Введіть назву' label='Назва майданчика' {...register("name", {required: "Це обовязкове поле", maxLength: { value: 50, message: "Максимальна довжина назви - 50 символів" }})} error={errors.name?.message} />
         <InputForm placeholder='Введіть Адресу' label='Адреса майданчика' {...register("address", {required: "Це обовязкове поле"})} error={errors.address?.message} />

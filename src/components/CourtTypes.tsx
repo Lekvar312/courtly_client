@@ -5,6 +5,8 @@ import { createCourtType, deleteCourtType, editCourtType, getAllTypes } from '..
 import { createPortal } from 'react-dom'
 import ModalView from './ModalView'
 import CourtTypeCreateModal from './CourtTypeCreateModal'
+import { showToast } from './ToastNotification'
+import { ToastContainer } from 'react-toastify'
 
 type CourtType = {
   _id: string,
@@ -35,7 +37,7 @@ const initialState:State = {
   isDropdownOpen: false,
   newType: "",
   isModalOpen:false,
-  editType: null
+  editType: null,
 }
 
 const reducer = (state: State, action: Actions) => {
@@ -61,7 +63,7 @@ const reducer = (state: State, action: Actions) => {
     case "TOGGLE_MODAL": {
       return {
         ...state,
-        isModalOpen: action.payload
+        isModalOpen: action.payload,
       }
     }
     case "SET_EDIT_TYPE": {
@@ -128,18 +130,19 @@ const CourtTypes = () => {
       let updatedCourtType;
       if (state.editType) {
         updatedCourtType = await editCourtType(state.editType._id, state.newType);
-        if (!updatedCourtType?.data?.courtType) return console.log("Редагування не вдалося");
+        if (!updatedCourtType?.data?.courtType) return false;
         dispatch({ type: "UPDATE_COURT_TYPE", payload: updatedCourtType.data.courtType });
-  
+        showToast("Успішно відредаговано тип", "success")
       } else {
         const newCourtType = await createCourtType(state.newType);
         if (!newCourtType?.data?.courtType) return console.log("Створення не вдалося");
-  
         dispatch({ type: "CREATE_COURT_TYPE", payload: newCourtType.data.courtType });
+        showToast("Успішно додано новий тип", "success")
       }
   
     } catch (error) {
       console.error("Помилка при збереженні:", error);
+      showToast("Щось пішло не так", "error")
     }
   };
 
@@ -147,14 +150,17 @@ const CourtTypes = () => {
     try{
       await deleteCourtType(id)
       dispatch({type: "DELETE_COURT_TYPE", payload: id })
+      showToast("Тип успішно видалено ", "success")
     }catch(error) {
       console.log(error)
+      showToast("Не вдалось видалити тип", "error")
     }
   }
 
   return (
     <div className='flex gap-2'>
-    <div className='relative flex flex-col w-60 items-start gap-4  bg-sky-500 text-white rounded'>
+    <ToastContainer />
+    <div className='relative flex flex-col w-60 items-start gap-4  bg-sky-500 hover:bg-sky-600 transition-all text-white rounded'>
       <button  onClick={() => dispatch({ type: "TOGGLE_DROPDOWN", payload: !state.isDropdownOpen })} className='flex w-full  p-1 justify-between text-lg font-medium items-center gap-2 cursor-pointer'>
         <span>Типи майданчиків</span> {state.isDropdownOpen ? <ChevronUp /> : <ChevronDown />}
       </button>
@@ -172,7 +178,7 @@ const CourtTypes = () => {
         </ul>
       )}
       </div>
-      <button onClick={openCreateModal} className='bg-green-500 text-white px-2 rounded font-medium cursor-pointer'>Додати</button>
+      <button onClick={openCreateModal} className='bg-green-500 hover:bg-green-600 transition-all text-white px-2 rounded font-medium cursor-pointer'>Додати</button>
       {state.isModalOpen &&
         createPortal(
           <ModalView 

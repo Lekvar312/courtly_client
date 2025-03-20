@@ -1,7 +1,6 @@
 import React from 'react'
 import {useForm} from 'react-hook-form'
 import InputForm from './InputForm'
-
 type CreateCourtType = {
   onSubmit: () => void,
   onChange:(e:React.ChangeEvent<HTMLInputElement>) => void,
@@ -13,7 +12,7 @@ type FormState = {
   typeName: string
 }
 
-const CourtTypeCreateModal:React.FC<CreateCourtType> = ({onSubmit, isEditing,  onChange, value}) => {
+const CourtTypeCreateModal:React.FC<CreateCourtType> = ({onSubmit, isEditing, onChange, value}) => {
   const {register, handleSubmit, formState:{errors} } = useForm<FormState>()
 
   return (

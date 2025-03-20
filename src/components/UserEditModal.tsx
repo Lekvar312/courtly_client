@@ -2,6 +2,7 @@ import React, {useReducer} from 'react'
 import { editUser } from '../services/UserService';
 import InputForm from './InputForm';
 import Select from './Select';
+import { showToast } from './ToastNotification';
 
 type Modal = {
   user: User | null
@@ -62,7 +63,9 @@ const UserEditModal: React.FC<Modal> = ({user, onUpdate}) => {
     try {
       const updatedUser = await editUser(state._id!, state);
       onUpdate(updatedUser.user); 
+      showToast("Користувача успішно відредаговано", "success")
     } catch (error: any) {
+      showToast("Не вдалось відредагувати користувача", "error")
     }
   };
   
