@@ -1,49 +1,58 @@
-import  { AxiosError } from "axios"
-import axiosInstance from "../api/axiosInstance"
-import { Court } from "../type"
+import { AxiosError } from "axios";
+import axiosInstance from "../api/axiosInstance";
+import { Court } from "../type";
 
-export const fetchCourts = async (name:string): Promise<Court[]> => {
-  try{
-    const {data} = await axiosInstance.get<Court[]>("/courts", {
-      params: name ? {name} : {}
-    })
-    return data
-  }catch(e){
-      if(e instanceof AxiosError) {
-        console.error("Axios Error", e)
-      }else{
-        console.error("error", e)
-      }
-    throw e
+export const fetchCourts = async (name: string): Promise<Court[]> => {
+  try {
+    const { data } = await axiosInstance.get<Court[]>("/courts", {
+      params: name ? { name } : {},
+    });
+    return data;
+  } catch (e) {
+    if (e instanceof AxiosError) {
+      console.error("Axios Error", e);
+    } else {
+      console.error("error", e);
+    }
+    throw e;
   }
-}
+};
 
+export const getCourtByID = async (id: string) => {
+  try {
+    const { data } = await axiosInstance.get(`/courts/${id}`);
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 export const deleteCourt = async (id: string) => {
   try {
-    const response = await axiosInstance.delete(`/courts/${id}`)
-    return response
+    const response = await axiosInstance.delete(`/courts/${id}`);
+    return response;
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
 
 type Data = {
-  _id?:string,
-  name: string,
-  type: string
-  address: string,
+  _id?: string;
+  name: string;
+  type: string;
+  address: string;
   workingHours: {
-    startTime: string,
-    endTime: string,
-  }
-  price: string,
-  picture:string | File | null
-}
+    startTime: string;
+    endTime: string;
+  };
+  price: string;
+  picture: string | File | null;
+};
 
 export const createCourt = async (courtData: Data) => {
   try {
-    console.log(courtData)
+    console.log(courtData);
     const formData = new FormData();
 
     formData.append("name", courtData.name);
@@ -55,20 +64,19 @@ export const createCourt = async (courtData: Data) => {
 
     if (courtData.picture) {
       if (courtData.picture instanceof FileList && courtData.picture.length > 0) {
-        formData.append("picture", courtData.picture[0]); 
+        formData.append("picture", courtData.picture[0]);
       } else if (courtData.picture instanceof File) {
-        formData.append("picture", courtData.picture); 
+        formData.append("picture", courtData.picture);
       }
     }
 
-    const { data } = await axiosInstance.post('/courts', formData, {
+    const { data } = await axiosInstance.post("/courts", formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        "Content-Type": "multipart/form-data",
       },
     });
-    console.log(data)
+    console.log(data);
     return data;
-    
   } catch (error) {
     if (error instanceof AxiosError) {
       console.error("Помилка при створенні майданчика:", error.response?.data || error.message);
@@ -79,22 +87,21 @@ export const createCourt = async (courtData: Data) => {
   }
 };
 
-
 type EditData = {
-  _id?:string,
-  name: string,
+  _id?: string;
+  name: string;
   type: {
-    _id:string,
-    name:string
-  }
-  address: string,
+    _id: string;
+    name: string;
+  };
+  address: string;
   workingHours: {
-    startTime: string,
-    endTime: string,
-  }
-  price: string,
-  picture:string | File | null
-}
+    startTime: string;
+    endTime: string;
+  };
+  price: string;
+  picture: string | File | null;
+};
 
 export const editCourt = async (id: string, courtData: EditData) => {
   try {
@@ -116,7 +123,7 @@ export const editCourt = async (id: string, courtData: EditData) => {
     }
     const { data } = await axiosInstance.put(`/courts/${id}`, formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        "Content-Type": "multipart/form-data",
       },
     });
     console.log(data);
@@ -130,4 +137,3 @@ export const editCourt = async (id: string, courtData: EditData) => {
     throw error;
   }
 };
-

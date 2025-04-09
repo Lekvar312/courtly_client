@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import AuthButton from "./AuthButton";
 import { Menu, X } from "lucide-react";
 
@@ -36,19 +36,31 @@ const Header: React.FC = () => {
         >
           <ul className="flex bg-white flex-col items-center text-xl pb-2.5 md:pb-0 md:flex-row md:text-lg gap-5 mx-auto">
             <li>
-              <Link onClick={() => setIsMenuOpen(false)} to="/">
-                Про нас
-              </Link>
+              <NavLink
+                to="/"
+                onClick={() => setIsMenuOpen(false)}
+                className={({ isActive }) => `${isActive ? "bg-sky-500 text-white rounded-xl" : ""} py-1 px-2.5`}
+              >
+                Головна
+              </NavLink>
             </li>
             <li>
-              <Link onClick={() => setIsMenuOpen(false)} to="/courts">
+              <NavLink
+                onClick={() => setIsMenuOpen(false)}
+                to="/courts"
+                className={({ isActive }) => `${isActive ? "bg-sky-500 text-white rounded-xl" : ""} py-1 px-2.5`}
+              >
                 Майданчики
-              </Link>
+              </NavLink>
             </li>
             <li>
-              <Link onClick={() => setIsMenuOpen(false)} to="/">
+              <NavLink
+                onClick={() => setIsMenuOpen(false)}
+                to="/contacts"
+                className={({ isActive }) => `${isActive ? "bg-sky-500 text-white rounded-xl" : ""} py-1 px-2.5`}
+              >
                 Контакти
-              </Link>
+              </NavLink>
             </li>
           </ul>
         </nav>
