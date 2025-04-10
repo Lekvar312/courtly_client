@@ -35,25 +35,44 @@ const CourtDetail = () => {
   };
 
   return (
-    <section className="h-full py-10">
+    <section className="min-h-screen py-10 flex flex-col gap-10 justify-center">
       <h2 className="text-2xl font-bold">Забронювати: {court?.name}</h2>
-      <article className="flex gap-10 border border-slate-300 shadow-xl rounded-xl">
-        <img className="w-96 h-96 object-cover" src={`${import.meta.env.VITE_BASE_URL + court?.picture}`} alt="court" />
-        <div className="w-full">
-          <h2 className="text-2xl text-center font-medium">{court?.name}</h2>
-          <p>{court?.address}</p>
-          <p>{court?.type.name}</p>
-          <p>{court?.price}</p>
+      <article className="shadow-2xl w-full flex flex-col gap-2 md:flex-row px-2 md:px-0">
+        <img
+          src={`${import.meta.env.VITE_BASE_URL + court?.picture}`}
+          alt={court?.name}
+          className="w-full md:w-1/2 h-full  object-cover max-h-[450px]"
+        />
+
+        <div className="w-full text-lg font-light flex flex-col justify-between gap-5 ">
+          <h3 className="text-xl font-bold text-center">{court?.name}</h3>
+          <div className="flex flex-col gap-3 w-full">
+            <h3>
+              <b className="font-bold">Адреса: </b>
+              {court?.address}
+            </h3>
+            <p>
+              <b className="font-bold">Тип майданчика: </b>
+              {court?.type.name}
+            </p>
+            <p>
+              <b className="font-bold">Ціна/год: </b>
+              {court?.price}
+            </p>
+          </div>
           {court?.workingHours && (
-            <div className="mt-5 w-full bg-red-300 flex flex-col gap-5">
-              <h3 className="text-x text-center font-semibold">Доступні години:</h3>
-              <ul className="flex gap-2 justify-between">
+            <div className="flex flex-col gap-2">
+              <h3 className="text-lg font-bold text-center">Доступні години</h3>
+              <ul className="flex gap-3 justify-start flex-wrap">
                 {generateAvailableTimes(court.workingHours.startTime, court.workingHours.endTime).map((time, index) => (
-                  <li key={index}>{time}</li>
+                  <li className="bg-sky-500 p-2 hover:bg-fuchsia-300 text-white font-bold rounded cursor-pointer" key={index}>
+                    {time}
+                  </li>
                 ))}
               </ul>
             </div>
           )}
+          <button className="bg-green-500 w-full py-2 text-white font-bold cursor-pointer hover:bg-green-600">Забронювати</button>
         </div>
       </article>
     </section>
