@@ -15,6 +15,7 @@ import DashboardUsers from "./components/DashboardUsers.tsx";
 import DashboardCourts from "./components/DashboardCourts.tsx";
 import Contacts from "./components/Contacts.tsx";
 import CourtDetail from "./pages/CourtDetail.tsx";
+import NotFoundPage from "./pages/NotFoundPage.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -40,6 +41,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="users" element={<DashboardUsers />} />
             <Route path="courts" element={<DashboardCourts />} />
           </Route>
+          <Route path="not-found" element={<NotFoundPage />}></Route>
         </Routes>
       </BrowserRouter>
     </Provider>

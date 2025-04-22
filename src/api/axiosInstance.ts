@@ -8,7 +8,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+    config.headers.Authorization = `Bearer ${token.replace(/^"|"$/g, "")}`;
   }
   return config;
 });
@@ -40,6 +40,6 @@ axiosInstance.interceptors.response.use(
     }
     return Promise.reject(error);
   }
-);  
+);
 
 export default axiosInstance;
