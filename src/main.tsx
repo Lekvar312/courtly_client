@@ -14,8 +14,8 @@ import Dashboard from "./components/Dashboard.tsx";
 import DashboardUsers from "./components/DashboardUsers.tsx";
 import DashboardCourts from "./components/DashboardCourts.tsx";
 import Contacts from "./components/Contacts.tsx";
-import CourtDetail from "./pages/CourtDetail.tsx";
 import NotFoundPage from "./pages/NotFoundPage.tsx";
+import BookingPage from "./pages/BookingPage.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -27,7 +27,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="login" element={<Login />} />
             <Route path="signup" element={<SignUp />} />
             <Route path="courts" element={<Courts />} />
-            <Route path="/courts/:id" element={<CourtDetail />} />
+            <Route path="/courts/:id" element={<BookingPage />} />
             <Route path="contacts" element={<Contacts />} />
           </Route>
           <Route
