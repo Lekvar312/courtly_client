@@ -2,7 +2,7 @@ import { AxiosError } from "axios";
 import axiosInstance from "../api/axiosInstance";
 import { Court } from "../type";
 
-export const fetchCourts = async (name: string): Promise<Court[]> => {
+export const fetchCourts = async (name?: string): Promise<Court[]> => {
   try {
     const { data } = await axiosInstance.get<Court[]>("/courts", {
       params: name ? { name } : {},
@@ -21,7 +21,6 @@ export const fetchCourts = async (name: string): Promise<Court[]> => {
 export const getCourtByID = async (id: string) => {
   try {
     const { data } = await axiosInstance.get(`/courts/${id}`);
-    console.log(data);
     return data;
   } catch (error) {
     console.log(error);

@@ -1,7 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import { useParams } from "react-router-dom";
 import { getCourtByID } from "../services/CourtsService";
 import { Court } from "../type";
+import { createPortal } from "react-dom";
+import ModalView from "../components/ModalView";
+
+type BookingDataType = {
+  date: string;
+  time: string[];
+  userId: string;
+  courtId: string | undefined;
+};
+
+type User = {
+  _id: string;
+  name: string;
+  email: string;
+  role: string;
+};
 
 const getDaysOfWeek = () => {
   const daysOfWeek = ["Неділя", "Понеділок", "Вівторок", "Середа", "Четверг", "Пятниця", "Субота"];
@@ -17,6 +33,7 @@ const getDaysOfWeek = () => {
       date: date.toLocaleDateString("uk-UA", {
         day: "2-digit",
         month: "2-digit",
+        year: "2-digit",
       }),
     });
   }
@@ -27,17 +44,17 @@ const BookingPage: React.FC = () => {
   const { id } = useParams();
   const [court, setCourt] = useState<Court | null>(null);
   const [weekDays, setWeekDays] = useState<{ dayName: string; date: string }[]>([]);
-  const [bookingTime, setBookingTime] = useState<string[]>([]);
-  console.log(bookingTime);
+  const [bookingData, setBookingData] = useState<BookingDataType>({
+    userId: "",
+    date: "",
+    time: [],
+    courtId: "",
+  });
+  const [user, setUser] = useState<User>();
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     setWeekDays(getDaysOfWeek());
-
-    const savedTimes = localStorage.getItem(`bookingTimes_${id}`);
-    if (savedTimes) {
-      setBookingTime(JSON.parse(savedTimes));
-    }
-
     const getCourt = async () => {
       try {
         if (id) {
@@ -50,6 +67,12 @@ const BookingPage: React.FC = () => {
     };
     getCourt();
   }, []);
+
+  useEffect(() => {
+    const userInfo = JSON.parse(localStorage.getItem("user") || "{}");
+    if (userInfo && userInfo._id && court?._id) setBookingData((prev) => ({ ...prev, userId: userInfo._id, courtId: court?._id }));
+    setUser(userInfo);
+  }, [court]);
 
   const generateTimeSlots = (start: string, end: string): string[] => {
     const slots = [];
@@ -73,17 +96,43 @@ const BookingPage: React.FC = () => {
 
     return slots;
   };
-  const toggleBookingTime = (time: string) => {
-    setBookingTime((prev) => {
-      const updateTimes = prev.includes(time) ? prev.filter((t) => t !== time) : [...prev, time];
-      localStorage.setItem(`bookingTimes_${id}`, JSON.stringify(updateTimes));
-      return updateTimes;
-    });
-  };
 
   const timeSlots =
     court?.workingHours?.startTime && court?.workingHours?.endTime ? generateTimeSlots(court.workingHours.startTime, court.workingHours.endTime) : [];
 
+  const toggleTimeSlot = (slot: string) => {
+    setBookingData((prev) => {
+      const exists = prev.time.includes(slot);
+
+      if (exists) {
+        // Якщо слот уже вибраний, видаляємо його
+        return {
+          ...prev,
+          time: prev.time.filter((s) => s !== slot),
+        };
+      } else {
+        // Додаємо обраний слот
+        return {
+          ...prev,
+          time: [...prev.time, slot].sort(), // сортуємо, щоб час був у правильному порядку
+        };
+      }
+    });
+  };
+
+  const getEndTime = (startTime: string) => {
+    const [hour, minute] = startTime.split(":").map(Number); // розбиваємо час на години та хвилини
+    const endDate = new Date();
+    endDate.setHours(hour + 1, minute); // додаємо 1 годину до вибраного часу
+    return endDate.toTimeString().slice(0, 5); // повертаємо час у форматі HH:MM
+  };
+  const isTimeSlotDisabled = (slot: string): boolean => {
+    const [slotHour, slotMinute] = slot.split(":").map(Number);
+    const slotDate = new Date();
+    slotDate.setHours(slotHour, slotMinute, 0, 0);
+
+    return slotDate < new Date(); // Якщо час слоту менший за поточний, то він має бути disabled
+  };
   return (
     <>
       <section className="border mt-9 flex rounded-xl border-slate-200 shadow-2xl items-center p-3 md:p-10 justify-center flex-col">
@@ -95,8 +144,12 @@ const BookingPage: React.FC = () => {
               <h1 className="text-center text-xs p-2 sm:text-lg font-medium">Оберіть день бронювання</h1>
               {weekDays.map((day, index) => (
                 <li
+                  onClick={() => setBookingData((prev) => ({ ...prev, date: day.date, time: [] }))}
                   key={index}
-                  className="bg-white relative rounded px-2 py-1 cursor-pointer border border-gray-300 hover:text-white hover:bg-sky-500 hover:border-sky-500 transition-all"
+                  className={`relative rounded px-2 py-1 cursor-pointer border ${
+                    bookingData?.date === day.date ? "bg-sky-500 text-white" : "bg-white"
+                  } text-whit
+                  border-gray-300 hover:text-white hover:bg-sky-500 hover:border-sky-500 transition-all`}
                 >
                   <span className="text-lg">{day.dayName}</span>
                   <small className="absolute top-0 text-xs right-2">{day.date}</small>
@@ -107,17 +160,38 @@ const BookingPage: React.FC = () => {
               <h1 className="text-center text-xs p-2 sm:text-lg font-medium">Оберіть доступний час для бронювання</h1>
               <ul className="flex flex-col sm:flex-row sm:flex-wrap items-center justify-center p-1 gap-1">
                 {timeSlots.map((slot, index) => (
-                  <li
-                    onClick={() => toggleBookingTime(slot)}
-                    key={index}
-                    className={`w-full sm:w-16 h-8 sm:h-12 flex items-center justify-center px-3 py-2 rounded ${
-                      bookingTime.includes(slot) ? "bg-gray-300" : "bg-sky-500"
-                    } text-white font-bold cursor-pointer transition-all`}
-                  >
-                    {slot}
+                  <li onClick={() => toggleTimeSlot(slot)} key={index} className={` w-full sm:w-16  flex items-center justify-center `}>
+                    <button
+                      disabled={isTimeSlotDisabled(slot)}
+                      className={`${
+                        bookingData.time.includes(slot) ? "bg-stone-200 text-stone-500 border-stone-400" : "bg-sky-500 text-white"
+                      } px-3 py-2 rounded cursor-pointer disabled:opacity-50 w-full sm:w-16`}
+                    >
+                      {slot}
+                    </button>
                   </li>
                 ))}
               </ul>
+              <button
+                disabled={!bookingData?.date || bookingData?.time.length === 0}
+                className="bg-green-400 text-white rounded py-2 cursor-pointer font-bold disabled:border disabled:cursor-auto disabled:bg-transparent disabled:text-black disabled:font-normal"
+                onClick={() => setIsModalOpen((prev) => !prev)}
+              >
+                Забронювати
+              </button>
+              {isModalOpen &&
+                createPortal(
+                  <ModalView onClose={() => setIsModalOpen(false)}>
+                    <h2>{user?.name}</h2>
+                    <h4>
+                      Ви забронювали <b>{court?.name} </b>
+                    </h4>
+                    <p>
+                      Ваш час бронювання: {bookingData.time[0]} до {getEndTime(bookingData.time[bookingData.time.length - 1])}
+                    </p>
+                  </ModalView>,
+                  document.body
+                )}
             </div>
           </div>
         </article>

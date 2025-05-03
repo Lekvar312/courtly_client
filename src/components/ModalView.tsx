@@ -1,20 +1,26 @@
-import { X } from 'lucide-react'
-import React from 'react'
+import { X } from "lucide-react";
+import React from "react";
 
 type Modal = {
-  onClose: () => void
-  children:React.ReactNode
-}
+  onClose: () => void;
+  children: React.ReactNode;
+};
 
-const ModalView:React.FC<Modal> = ({onClose, children}) => {
+const ModalView: React.FC<Modal> = ({ onClose, children }) => {
   return (
-    <section onClick={onClose} className='w-full h-full bg-black/50 fixed inset-0 flex flex-col items-center justify-center backdrop-blur-xs'>
-    <div onClick={(e) => e.stopPropagation()} className='bg-white relative text-black rounded-xl p-4 w-96'>
-      <button type='button' onClick={onClose} className=' rounded-full absolute right-1 top-1 text-red-500 hover:bg-red-500 hover:text-white  font-bold text-xs cursor-pointer transition-all'><X size={20}/></button>
-      {children}
-    </div>
-  </section>
-  )
-}
+    <section onClick={onClose} className="w-full h-full z-50 bg-black/50 fixed inset-0 flex flex-col items-center justify-center backdrop-blur-xs">
+      <div onClick={(e) => e.stopPropagation()} className="bg-white relative text-black rounded-xl p-4 w-96">
+        <button
+          type="button"
+          onClick={onClose}
+          className=" rounded-full absolute right-1 top-1 text-red-500 hover:bg-red-500 hover:text-white  font-bold text-xs cursor-pointer transition-all"
+        >
+          <X size={20} />
+        </button>
+        {children}
+      </div>
+    </section>
+  );
+};
 
-export default ModalView
+export default ModalView;

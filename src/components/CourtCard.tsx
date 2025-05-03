@@ -18,7 +18,7 @@ const CourtCard: React.FC<CourtCardProps> = ({ court }) => {
         <div className="px-4">
           <h2 className="md:text-lg text-xl font-bold  capitalize  text-center">{court.name}</h2>
           <p className="text-base sm:text-lg font-medium transition-all truncate">{court.address}</p>
-          <p className="italic md:not-italic">{court.type.name}</p>
+          <p className="italic md:not-italic">{court.type?.name}</p>
           <span className="flex justify-between">
             <p className="italic md:not-italic">{court.workingHours.startTime + "/" + court.workingHours.endTime}</p>
             <b className="text-lg transition-all font-bold md:text-base">{court.price} грн.</b>
