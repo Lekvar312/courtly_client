@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { deleteCourt, fetchCourts } from "../services/CourtsService";
 import { Court } from "../type";
 import DashboardTable from "./DashboardTable";
@@ -10,6 +10,8 @@ import CourtsCreateForm from "./CourtsCreateForm";
 import CourtEditForm from "./CourtEditForm";
 import { showToast } from "./ToastNotification";
 import { ToastContainer } from "react-toastify";
+import { Search } from "lucide-react";
+import useDebounce from "../hooks/useDebounce";
 
 const columns = [
   { key: "_id", label: "ID" },
@@ -52,57 +54,27 @@ const initialState: State = {
   modalType: null,
 };
 
-const reducer = (state: State, action: Actions) => {
+const reducer = (state: State, action: Actions): State => {
   switch (action.type) {
-    case "SET_COURTS": {
+    case "SET_COURTS":
+      return { ...state, courts: action.payload };
+    case "TOGGLE_MODAL":
+      return { ...state, isModalOpen: action.payload };
+    case "SET_SELECTED_COURT":
+      return { ...state, selectedCourt: action.payload };
+    case "GET_TYPES":
+      return { ...state, types: action.payload };
+    case "SET_MODAL_TYPE":
+      return { ...state, modalType: action.payload };
+    case "CREATE_NEW_COURT":
+      return { ...state, courts: [...state.courts, action.payload] };
+    case "DELETE_COURT":
+      return { ...state, courts: state.courts.filter((c) => c._id !== action.payload) };
+    case "UPDATE_COURT":
       return {
         ...state,
-        courts: action.payload,
+        courts: state.courts.map((c) => (c._id === action.payload._id ? action.payload : c)),
       };
-    }
-    case "TOGGLE_MODAL": {
-      return {
-        ...state,
-        isModalOpen: action.payload,
-      };
-    }
-    case "SET_SELECTED_COURT": {
-      return {
-        ...state,
-        selectedCourt: action.payload,
-      };
-    }
-    case "GET_TYPES": {
-      return {
-        ...state,
-        types: action.payload,
-      };
-    }
-    case "SET_MODAL_TYPE": {
-      return {
-        ...state,
-        modalType: action.payload,
-      };
-    }
-    case "CREATE_NEW_COURT": {
-      return {
-        ...state,
-        courts: [...state.courts, action.payload],
-      };
-    }
-    case "DELETE_COURT": {
-      return {
-        ...state,
-        courts: state.courts.filter((court) => court._id !== action.payload),
-      };
-    }
-    case "UPDATE_COURT": {
-      return {
-        ...state,
-        courts: state.courts.map((court) => (court._id === action.payload._id ? action.payload : court)),
-      };
-    }
-
     default:
       return state;
   }
@@ -110,6 +82,10 @@ const reducer = (state: State, action: Actions) => {
 
 const DashboardCourts = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearch = useDebounce(searchTerm, 300);
+  const [filteredCourts, setFilteredCourts] = useState<Court[]>([]);
+
   useEffect(() => {
     const getData = async () => {
       const courtsResponse = await fetchCourts();
@@ -119,6 +95,16 @@ const DashboardCourts = () => {
     };
     getData();
   }, []);
+
+  useEffect(() => {
+    const filtered = state.courts.filter(
+      (court) =>
+        court.name.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        court.address.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        court.type?.name.toLowerCase().includes(debouncedSearch.toLowerCase())
+    );
+    setFilteredCourts(filtered);
+  }, [debouncedSearch, state.courts]);
 
   const openEditModal = (court: Court) => {
     dispatch({ type: "TOGGLE_MODAL", payload: true });
@@ -132,7 +118,6 @@ const DashboardCourts = () => {
   };
 
   const handleCreateCourt = (newCourt: Court) => {
-    console.log(newCourt);
     dispatch({ type: "CREATE_NEW_COURT", payload: newCourt });
   };
 
@@ -147,22 +132,37 @@ const DashboardCourts = () => {
       dispatch({ type: "DELETE_COURT", payload: id });
       showToast("Майданчик успішно видалено", "success");
     } catch (error) {
-      showToast("Не вдалось видалити майданчик", "error");
       console.error("Помилка при видаленні:", error);
+      showToast("Не вдалось видалити майданчик", "error");
     }
   };
 
   return (
     <>
-      <h2 className="text-2xl font-bold">Панель Адміністратора: Спортивні Майданчики </h2>
-      <div className="flex justify-between">
+      <h2 className="text-2xl font-bold mb-4">Панель Адміністратора: Спортивні Майданчики</h2>
+      <div className="w-full max-w-md flex items-center border border-slate-300 rounded-xl shadow-sm focus-within:ring-1 focus-within:ring-blue-500 focus-within:border-blue-500 transition">
+        <span className="px-3 text-slate-400">
+          <Search size={20} />
+        </span>
+        <input
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Пошук по імені, адресі або типу..."
+          className="w-full py-2 pr-4 bg-transparent focus:outline-none"
+        />
+      </div>
+
+      <div className="flex justify-between items-center mb-4 flex-wrap gap-4">
         <CourtTypes />
-        <ToastContainer />
-        <button onClick={openCreateModal} className="bg-green-500 hover:bg-green-600 cursor-pointer text-white px-2 rounded text-lg font-normal">
+
+        <button onClick={openCreateModal} className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded text-lg">
           Додати Майданчик
         </button>
       </div>
-      <DashboardTable columns={columns} data={state.courts || []} onDelete={handleDelete} onEdit={openEditModal} />
+
+      <ToastContainer />
+      <DashboardTable columns={columns} data={filteredCourts} onDelete={handleDelete} onEdit={openEditModal} />
+
       {state.isModalOpen &&
         createPortal(
           <ModalView onClose={() => dispatch({ type: "TOGGLE_MODAL", payload: false })}>
@@ -171,8 +171,8 @@ const DashboardCourts = () => {
               <CourtEditForm
                 onUpdate={handleEditCourt}
                 types={state.types}
-                closeModal={() => dispatch({ type: "TOGGLE_MODAL", payload: false })}
                 selectedCourt={state.selectedCourt}
+                closeModal={() => dispatch({ type: "TOGGLE_MODAL", payload: false })}
               />
             )}
           </ModalView>,

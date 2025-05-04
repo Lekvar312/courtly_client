@@ -27,6 +27,7 @@ const Login: React.FC = () => {
       );
       setEmail("");
       setPassword("");
+      navigate("/courts");
     } catch (error: any) {
       setError(error.message || "Сталась помилка");
     }
@@ -50,7 +51,7 @@ const Login: React.FC = () => {
               Електронна Пошта
             </label>
             <input
-              className="h-10 border border-slate-300 px-2 w-full rounded"
+              className="h-10 border bg-slate-100 border-slate-300 px-2 w-full rounded"
               type="email"
               placeholder="Введіть пошту"
               id="email-input"
@@ -63,7 +64,7 @@ const Login: React.FC = () => {
               Пароль
             </label>
             <input
-              className="h-10 border border-slate-300 px-2 w-full rounded"
+              className="h-10 border bg-slate-100 border-slate-300 px-2 w-full rounded"
               type="password"
               placeholder="Введіть пароль"
               id="password-input"

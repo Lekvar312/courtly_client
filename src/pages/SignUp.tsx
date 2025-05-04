@@ -56,7 +56,7 @@ const SignUp = () => {
               Ім`я
             </label>
             <input
-              className="h-10 border border-slate-300 px-2 w-full rounded"
+              className="h-10 border bg-slate-100 border-slate-300 px-2 w-full rounded"
               type="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -69,7 +69,7 @@ const SignUp = () => {
               Електронна Пошта
             </label>
             <input
-              className="h-10 border border-slate-300 px-2 w-full rounded"
+              className="h-10 border bg-slate-100 border-slate-300 px-2 w-full rounded"
               type="email"
               value={email}
               placeholder="Введіть пошту"
@@ -82,7 +82,7 @@ const SignUp = () => {
               Пароль
             </label>
             <input
-              className="h-10 border border-slate-300 px-2 w-full rounded"
+              className="h-10 border bg-slate-100 border-slate-300 px-2 w-full rounded"
               type="password"
               value={password}
               placeholder="Введіть пароль"
@@ -95,7 +95,7 @@ const SignUp = () => {
               Повторіть Пароль
             </label>
             <input
-              className="h-10 border border-slate-300 px-2 w-full rounded"
+              className="h-10 border bg-slate-100 border-slate-300 px-2 w-full rounded"
               type="password"
               placeholder="Повторіть пароль"
               id="repeat-password-input"

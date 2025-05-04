@@ -4,6 +4,7 @@ import { getCourtByID } from "../services/CourtsService";
 import { Court } from "../type";
 import { createPortal } from "react-dom";
 import ModalView from "../components/ModalView";
+import { Link } from "react-router-dom";
 
 type BookingDataType = {
   date: string;
@@ -72,6 +73,7 @@ const BookingPage: React.FC = () => {
     const userInfo = JSON.parse(localStorage.getItem("user") || "{}");
     if (userInfo && userInfo._id && court?._id) setBookingData((prev) => ({ ...prev, userId: userInfo._id, courtId: court?._id }));
     setUser(userInfo);
+    console.log(user);
   }, [court]);
 
   const generateTimeSlots = (start: string, end: string): string[] => {
@@ -127,12 +129,16 @@ const BookingPage: React.FC = () => {
     return endDate.toTimeString().slice(0, 5); // повертаємо час у форматі HH:MM
   };
   const isTimeSlotDisabled = (slot: string): boolean => {
-    const [slotHour, slotMinute] = slot.split(":").map(Number);
-    const slotDate = new Date();
-    slotDate.setHours(slotHour, slotMinute, 0, 0);
+    if (!bookingData.date) return true;
 
-    return slotDate < new Date(); // Якщо час слоту менший за поточний, то він має бути disabled
+    const [day, month, year] = bookingData.date.split("."); // формат dd.mm.yy
+    const [slotHour, slotMinute] = slot.split(":").map(Number);
+
+    const slotDate = new Date(`20${year}`, Number(month) - 1, Number(day), slotHour, slotMinute);
+
+    return slotDate < new Date();
   };
+
   return (
     <>
       <section className="border mt-9 flex rounded-xl border-slate-200 shadow-2xl items-center p-3 md:p-10 justify-center flex-col">
@@ -174,7 +180,7 @@ const BookingPage: React.FC = () => {
               </ul>
               <button
                 disabled={!bookingData?.date || bookingData?.time.length === 0}
-                className="bg-green-400 text-white rounded py-2 cursor-pointer font-bold disabled:border disabled:cursor-auto disabled:bg-transparent disabled:text-black disabled:font-normal"
+                className="bg-green-400 text-white rounded py-2 cursor-pointer hover:bg-green-500 font-bold disabled:border disabled:cursor-auto disabled:bg-transparent disabled:text-black disabled:font-normal"
                 onClick={() => setIsModalOpen((prev) => !prev)}
               >
                 Забронювати
@@ -182,13 +188,33 @@ const BookingPage: React.FC = () => {
               {isModalOpen &&
                 createPortal(
                   <ModalView onClose={() => setIsModalOpen(false)}>
-                    <h2>{user?.name}</h2>
-                    <h4>
-                      Ви забронювали <b>{court?.name} </b>
-                    </h4>
-                    <p>
-                      Ваш час бронювання: {bookingData.time[0]} до {getEndTime(bookingData.time[bookingData.time.length - 1])}
-                    </p>
+                    {user && user._id ? (
+                      <div className="flex flex-col gap-2">
+                        <h2 className="font-medium text-xl">Вітаємо {user?.name}</h2>
+                        <h4>
+                          Ви забронювали <b>{court?.name} </b>
+                        </h4>
+                        <p>
+                          Ваш час бронювання: {bookingData.time[0]} до {getEndTime(bookingData.time[bookingData.time.length - 1])}
+                        </p>
+                        <b>Ціна становить: {court?.price * bookingData.time.length} грн</b>
+                        <button className="bg-sky-500 py-2 rounded text-white font-bold cursor-pointer hover:bg-sky-600">Підтвердити</button>
+                      </div>
+                    ) : (
+                      <div>
+                        <h3 className="text-center text-yellow-500 font-bold text-lg">Ви не увійшли в обліковий запис</h3>
+                        <p>
+                          Для того що забронювати майданчик ви повинні{" "}
+                          <span className="text-blue-500 font-bold hover:underline">
+                            <Link to={"/login"}>увійти</Link>
+                          </span>{" "}
+                          в обліковий запис, якщо в вас його не існує то{" "}
+                          <span className="text-blue-500 font-bold hover:underline">
+                            <Link to={"/signup"}>зареєструватись</Link>
+                          </span>
+                        </p>
+                      </div>
+                    )}
                   </ModalView>,
                   document.body
                 )}
