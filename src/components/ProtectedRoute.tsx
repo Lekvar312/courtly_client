@@ -14,7 +14,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ role, children }) => {
   if (user?.role === role) {
     return <>{children}</>;
   } else {
-    navigate("/not-found");
+    return (
+      <section className="h-full w-full flex items-center justify-center">
+        <h1 className="text-5xl text-sky-600 p-5 text-center font-bold">У вас не достатньо прав :(</h1>
+      </section>
+    );
   }
 };
 

@@ -13,6 +13,7 @@ import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import Dashboard from "./components/Dashboard.tsx";
 import DashboardUsers from "./components/DashboardUsers.tsx";
 import DashboardCourts from "./components/DashboardCourts.tsx";
+import DasboardBookings from "./components/DasboardBookings.tsx";
 import Contacts from "./components/Contacts.tsx";
 import NotFoundPage from "./pages/NotFoundPage.tsx";
 import BookingPage from "./pages/BookingPage.tsx";
@@ -40,8 +41,9 @@ createRoot(document.getElementById("root")!).render(
           >
             <Route path="users" element={<DashboardUsers />} />
             <Route path="courts" element={<DashboardCourts />} />
+            <Route path="bookings" element={<DasboardBookings />} />
           </Route>
-          <Route path="not-found" element={<NotFoundPage />}></Route>
+          <Route path="*" element={<NotFoundPage />}></Route>
         </Routes>
       </BrowserRouter>
     </Provider>

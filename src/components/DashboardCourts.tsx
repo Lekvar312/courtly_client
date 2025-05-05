@@ -155,7 +155,7 @@ const DashboardCourts = () => {
       <div className="flex justify-between items-center mb-4 flex-wrap gap-4">
         <CourtTypes />
 
-        <button onClick={openCreateModal} className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded text-lg">
+        <button onClick={openCreateModal} className="bg-green-500 cursor-pointer hover:bg-green-600 text-white px-4 py-2 rounded text-lg">
           Додати Майданчик
         </button>
       </div>

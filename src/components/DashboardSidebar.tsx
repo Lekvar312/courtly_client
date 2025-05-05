@@ -38,13 +38,15 @@ const DashboardSidebar: React.FC<AdminSideBar> = ({ isOpen, handleDashboard }) =
               Майданчики
             </DashboardSidebarItems>
           </Link>
-          <DashboardSidebarItems
-            colors={{ mainColor: "bg-blue-400", hoverColor: "hover:bg-blue-500" }}
-            icon={<ListCheck strokeWidth={2} />}
-            isOpen={isOpen}
-          >
-            Бронювання
-          </DashboardSidebarItems>
+          <Link to={"bookings"}>
+            <DashboardSidebarItems
+              colors={{ mainColor: "bg-blue-400", hoverColor: "hover:bg-blue-500" }}
+              icon={<ListCheck strokeWidth={2} />}
+              isOpen={isOpen}
+            >
+              Бронювання
+            </DashboardSidebarItems>
+          </Link>
         </ul>
         <button
           onClick={() => navigate("/")}

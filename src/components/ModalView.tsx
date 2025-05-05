@@ -8,8 +8,11 @@ type Modal = {
 
 const ModalView: React.FC<Modal> = ({ onClose, children }) => {
   return (
-    <section onClick={onClose} className="w-full h-full z-50 bg-black/50 fixed inset-0 flex flex-col items-center justify-center backdrop-blur-xs">
-      <div onClick={(e) => e.stopPropagation()} className="bg-white relative text-black rounded-xl p-4 w-96">
+    <section
+      onClick={onClose}
+      className="w-full h-full z-50 bg-black/50 fixed inset-0 flex flex-col px-10 items-center justify-center backdrop-blur-xs"
+    >
+      <div onClick={(e) => e.stopPropagation()} className="bg-white relative text-black rounded-xl p-4 sm:w-96 w-full">
         <button
           type="button"
           onClick={onClose}

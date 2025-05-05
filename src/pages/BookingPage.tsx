@@ -1,16 +1,25 @@
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { getCourtByID } from "../services/CourtsService";
 import { Court } from "../type";
 import { createPortal } from "react-dom";
 import ModalView from "../components/ModalView";
 import { Link } from "react-router-dom";
+import { createBooking, getAllBookings } from "../services/BookingService";
 
 type BookingDataType = {
   date: string;
   time: string[];
   userId: string;
   courtId: string | undefined;
+};
+
+type fetchBookingsType = {
+  courtId: {
+    name: string;
+    address: string;
+    _id: string;
+  };
 };
 
 type User = {
@@ -53,6 +62,7 @@ const BookingPage: React.FC = () => {
   });
   const [user, setUser] = useState<User>();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [bookings, setBookings] = useState([]);
 
   useEffect(() => {
     setWeekDays(getDaysOfWeek());
@@ -61,6 +71,9 @@ const BookingPage: React.FC = () => {
         if (id) {
           const data = await getCourtByID(id);
           setCourt(data);
+          const allBookings = await getAllBookings();
+          const courtBooking = allBookings.filter((b: any) => b.courtId?._id === id);
+          setBookings(courtBooking);
         }
       } catch (error) {
         console.log(error);
@@ -69,11 +82,12 @@ const BookingPage: React.FC = () => {
     getCourt();
   }, []);
 
+  console.log(bookings);
+
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("user") || "{}");
     if (userInfo && userInfo._id && court?._id) setBookingData((prev) => ({ ...prev, userId: userInfo._id, courtId: court?._id }));
     setUser(userInfo);
-    console.log(user);
   }, [court]);
 
   const generateTimeSlots = (start: string, end: string): string[] => {
@@ -138,6 +152,27 @@ const BookingPage: React.FC = () => {
 
     return slotDate < new Date();
   };
+  const isTimeSlotBooked = (slot: string): boolean => {
+    if (!bookingData.date || !bookings) return false;
+
+    const [day, month, year] = bookingData.date.split(".");
+    const [slotHour, slotMinute] = slot.split(":").map(Number);
+
+    // Створюємо локальний об'єкт Date з вибраної дати + години
+    const targetDate = new Date(`20${year}`, Number(month) - 1, Number(day), slotHour, slotMinute);
+
+    return bookings.some((b) =>
+      b.timeSlots.some((ts: string) => {
+        const bookedSlot = new Date(ts);
+        return (
+          bookedSlot.getFullYear() === targetDate.getFullYear() &&
+          bookedSlot.getMonth() === targetDate.getMonth() &&
+          bookedSlot.getDate() === targetDate.getDate() &&
+          bookedSlot.getHours() === targetDate.getHours()
+        );
+      })
+    );
+  };
 
   return (
     <>
@@ -168,10 +203,10 @@ const BookingPage: React.FC = () => {
                 {timeSlots.map((slot, index) => (
                   <li onClick={() => toggleTimeSlot(slot)} key={index} className={` w-full sm:w-16  flex items-center justify-center `}>
                     <button
-                      disabled={isTimeSlotDisabled(slot)}
+                      disabled={isTimeSlotDisabled(slot) || isTimeSlotBooked(slot)}
                       className={`${
-                        bookingData.time.includes(slot) ? "bg-stone-200 text-stone-500 border-stone-400" : "bg-sky-500 text-white"
-                      } px-3 py-2 rounded cursor-pointer disabled:opacity-50 w-full sm:w-16`}
+                        bookingData.time.includes(slot) ? "opacity-40 bg-sky-500 text-white" : "bg-sky-500 text-white"
+                      } px-3 py-2 rounded cursor-pointer disabled:bg-stone-200 disabled:text-stone-500 disabled:border-stone-400 w-full sm:w-16 disabled:cursor-not-allowed`}
                     >
                       {slot}
                     </button>
@@ -180,7 +215,7 @@ const BookingPage: React.FC = () => {
               </ul>
               <button
                 disabled={!bookingData?.date || bookingData?.time.length === 0}
-                className="bg-green-400 text-white rounded py-2 cursor-pointer hover:bg-green-500 font-bold disabled:border disabled:cursor-auto disabled:bg-transparent disabled:text-black disabled:font-normal"
+                className="bg-green-400 text-white border border-transparent rounded py-2 cursor-pointer hover:bg-green-500 font-bold disabled:cursor-not-allowed disabled:border disabled:border-gray-300 disabled:bg-gray-200  disabled:text-black disabled:font-normal"
                 onClick={() => setIsModalOpen((prev) => !prev)}
               >
                 Забронювати
@@ -197,11 +232,19 @@ const BookingPage: React.FC = () => {
                         <p>
                           Ваш час бронювання: {bookingData.time[0]} до {getEndTime(bookingData.time[bookingData.time.length - 1])}
                         </p>
-                        <b>Ціна становить: {court?.price * bookingData.time.length} грн</b>
-                        <button className="bg-sky-500 py-2 rounded text-white font-bold cursor-pointer hover:bg-sky-600">Підтвердити</button>
+                        <b>Ціна становить: {Number(court?.price) * bookingData.time.length} грн</b>
+                        <button
+                          onClick={async () => {
+                            await createBooking(bookingData);
+                            setIsModalOpen(false);
+                          }}
+                          className="bg-sky-500 py-2 rounded text-white font-bold cursor-pointer hover:bg-sky-600"
+                        >
+                          Підтвердити
+                        </button>
                       </div>
                     ) : (
-                      <div>
+                      <div className="flex flex-col gap-3">
                         <h3 className="text-center text-yellow-500 font-bold text-lg">Ви не увійшли в обліковий запис</h3>
                         <p>
                           Для того що забронювати майданчик ви повинні{" "}
