@@ -16,6 +16,7 @@ import { X } from "lucide-react";
 type Booking = {
   courtId: string;
   "courtId._id": string;
+  "courtId.name": string;
   "courtId.address": string;
   date: string;
   timeSlots: string[];
@@ -51,6 +52,8 @@ const DasboardBookings = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [selectedCourt, setSelectedCourt] = useState<string>("");
   const [selectedUser, setSelectedUser] = useState<string>("");
+  const [selectedDate, setSelectedDate] = useState<string>("");
+  const [reloadBookings, setReloadBookings] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -80,7 +83,7 @@ const DasboardBookings = () => {
       setBookings(formattedBookings);
     };
     fetchData();
-  }, []);
+  }, [reloadBookings]);
 
   const handleDelete = async (id: string) => {
     try {
@@ -95,19 +98,23 @@ const DasboardBookings = () => {
   const handleUpdateBooking = (updateBooking: Booking) => {
     setIsModalOpen(true);
     setBookingToUpdate(updateBooking);
+    console.log(updateBooking);
   };
 
-  const handleSubmitUpdate = async () => {
+  const handleSubmitUpdate = async (e: HTMLFormElement) => {
+    e.preventDefault();
     if (!bookingToUpdate) return;
     try {
       await updateBooking(bookingToUpdate._id, {
         courtId: selectedCourt ? selectedCourt : bookingToUpdate["courtId._id"],
         userId: selectedUser ? selectedUser : bookingToUpdate["userId._id"],
+        date: selectedDate ? selectedDate : bookingToUpdate.date,
       });
       showToast("Успішно новлено бронювання", "success");
       setIsModalOpen(false);
       setSelectedCourt("");
       setSelectedUser("");
+      setReloadBookings((prev) => !prev);
     } catch (error) {
       console.log(error);
       showToast("Не вдалося оновити бронювання", "error");
@@ -142,7 +149,9 @@ const DasboardBookings = () => {
                   className="border focus:outline-0  focus:ring-1 focus:ring-purple-500 w-full py-2 rounded border-gray-400 "
                   onChange={(e) => setSelectedCourt(e.target.value)}
                 >
-                  <option value="">Обрати інший майданчик</option>
+                  <option value="" disabled>
+                    {bookingToUpdate?.courtId}
+                  </option>
                   {courts.map((court) => (
                     <option key={court._id} value={court._id}>
                       {court.name}
@@ -160,7 +169,9 @@ const DasboardBookings = () => {
                   value={selectedUser}
                   onChange={(e) => setSelectedUser(e.target.value)}
                 >
-                  <option value="">Обрати іншого користувача</option>
+                  <option value="" disabled>
+                    {bookingToUpdate?.["userId.name"]}
+                  </option>
                   {users.map((user) => (
                     <option key={user._id} value={user._id}>
                       {user.name}
@@ -168,26 +179,17 @@ const DasboardBookings = () => {
                   ))}
                 </select>
               </span>
-              <InputForm placeholder="Оберіть дату" type="date" label="Дата бронювання" onChange={() => {}} />
-              <div>
-                <button
-                  onClick={() => setToggleTimeSlotButton((prev) => !prev)}
-                  className="flex w-full cursor-pointer border-gray-400 justify-between items-center border rounded py-1.5 px-1"
-                  type="button"
-                >
-                  <p>Заброньований час</p>
-                  {toggleTimeSlotButton ? <ChevronUp size={15} strokeWidth={2} /> : <ChevronDown size={15} />}
-                </button>
-                {toggleTimeSlotButton && (
-                  <ul className="px-1">
-                    {bookingToUpdate?.timeSlots.map((slot, index) => (
-                      <li key={index}>{slot}</li>
-                    ))}
-                  </ul>
-                )}
-              </div>
+              <InputForm
+                placeholder="Оберіть дату"
+                type="date"
+                label="Дата бронювання"
+                onChange={(e) => {
+                  setSelectedDate(e.target.value);
+                }}
+              />
+
               <button
-                onClick={(e) => handleSubmitUpdate()}
+                onClick={(e) => handleSubmitUpdate(e)}
                 type="submit"
                 className="bg-yellow-400 hover:bg-yellow-500 cursor-pointer py-1.5 rounded text-white font-bold"
               >
