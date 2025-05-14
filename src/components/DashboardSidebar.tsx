@@ -13,7 +13,9 @@ const DashboardSidebar: React.FC<AdminSideBar> = ({ isOpen, handleDashboard }) =
   return (
     <aside className={`border-1 p-2 flex gap-9 flex-col transition-all border-slate-200 rounded shadow-2xl h-full ${isOpen ? "w-2xs" : "w-16"}`}>
       <span className={`flex items-center ${isOpen ? "justify-between" : "justify-center"}`}>
-        <h2 className={`text-2xl font-medium transition-all  ${isOpen ? "flex" : "hidden"}`}>Courtly Dashboard</h2>
+        <Link to={"/admin"}>
+          <h2 className={`text-2xl font-medium transition-all  ${isOpen ? "flex" : "hidden"}`}>Courtly Dashboard</h2>
+        </Link>
         <button className="cursor-pointer flex items-center justify-end" onClick={handleDashboard}>
           <Menu strokeWidth={2} size={35} />
         </button>
@@ -38,13 +40,15 @@ const DashboardSidebar: React.FC<AdminSideBar> = ({ isOpen, handleDashboard }) =
               Майданчики
             </DashboardSidebarItems>
           </Link>
-          <DashboardSidebarItems
-            colors={{ mainColor: "bg-blue-400", hoverColor: "hover:bg-blue-500" }}
-            icon={<ListCheck strokeWidth={2} />}
-            isOpen={isOpen}
-          >
-            Бронювання
-          </DashboardSidebarItems>
+          <Link to={"bookings"}>
+            <DashboardSidebarItems
+              colors={{ mainColor: "bg-blue-400", hoverColor: "hover:bg-blue-500" }}
+              icon={<ListCheck strokeWidth={2} />}
+              isOpen={isOpen}
+            >
+              Бронювання
+            </DashboardSidebarItems>
+          </Link>
         </ul>
         <button
           onClick={() => navigate("/")}

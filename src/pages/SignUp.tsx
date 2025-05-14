@@ -1,47 +1,62 @@
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { signupService } from "../services/AuthServices";
+import { AppDispatch } from "../store/store";
+import { setUser } from "../store/userSlice";
 
-import { Link,} from "react-router-dom";
-import { AppDispatch, RootState } from "../store/store";
-import { signupUser } from "../store/userSlice";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignUp = () => {
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
 
   const dispatch = useDispatch<AppDispatch>();
-
-  const { loading, error } = useSelector((state: RootState) => state.user);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await dispatch(signupUser({ name, email, password })).unwrap();
-    } catch (err: any) {
-      console.log(err);
+      if (password !== confirmPassword) {
+        setError("Паролі не співпадають");
+        return;
+      }
+      const data = await signupService({ name, email, password });
+      dispatch(
+        setUser({
+          user: data.user,
+          accessToken: data.accessToken,
+          refreshToken: data.refreshToken,
+        })
+      );
+
+      setEmail("");
+      setName("");
+      setPassword("");
+      navigate("/");
+    } catch (error: any) {
+      setError(error.message || "Сталась помилка");
     }
-    setEmail("");
-    setName("");
-    setPassword("");
   };
   return (
     <section className="w-full h-full flex justify-center items-center">
-      {error && <p className="error">{error}</p>}
       <form
         onSubmit={handleSubmit}
-        className={`border transition-all border-slate-200 py-5 shadow-2xl flex items-center flex-col rounded w-full sm:w-96 bg-white`}
+        className={`border transition-all ${
+          error ? "border-red-400" : "border-slate-200"
+        } py-5 shadow-2xl flex items-center flex-col rounded w-full sm:w-96 bg-white`}
       >
-        <h2 className="text-2xl font-medium text-center transition-all mg-2 md:mb-4">
-          Зареєструватись
-        </h2>
+        <h2 className="text-2xl font-medium text-center transition-all mg-2 md:mb-4">Зареєструватись</h2>
+        {error && <p className="text-red-400">{error}</p>}
         <div className="w-full px-6 flex flex-col justify-center gap-3 sm:gap-5">
           <span className="flex flex-col gap-0.5">
-            <label htmlFor="password-input" className="text-base sm:text-lg">
+            <label htmlFor="password-input" className="text-sm">
               Ім`я
             </label>
             <input
-              className="h-9 border border-slate-300 px-2 w-full rounded"
+              className="h-10 border bg-slate-100 border-slate-300 px-2 w-full rounded"
               type="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -50,11 +65,11 @@ const SignUp = () => {
             />
           </span>
           <span className="flex flex-col gap-0.5">
-            <label htmlFor="email-input" className="text-base sm:text-lg">
+            <label htmlFor="email-input" className="text-sm">
               Електронна Пошта
             </label>
             <input
-              className="h-9 border border-slate-300 px-2 w-full rounded"
+              className="h-10 border bg-slate-100 border-slate-300 px-2 w-full rounded"
               type="email"
               value={email}
               placeholder="Введіть пошту"
@@ -63,11 +78,11 @@ const SignUp = () => {
             />
           </span>
           <span className="flex flex-col gap-0.5">
-            <label htmlFor="password-input" className="text-base sm:text-lg">
+            <label htmlFor="password-input" className="text-sm">
               Пароль
             </label>
             <input
-              className="h-9 border border-slate-300 px-2 w-full rounded"
+              className="h-10 border bg-slate-100 border-slate-300 px-2 w-full rounded"
               type="password"
               value={password}
               placeholder="Введіть пароль"
@@ -76,25 +91,22 @@ const SignUp = () => {
             />
           </span>
           <span className="flex flex-col gap-0.5">
-            <label
-              htmlFor="repeat-password-input"
-              className="text-base sm:text-lg"
-            >
+            <label htmlFor="repeat-password-input" className="text-sm">
               Повторіть Пароль
             </label>
             <input
-              className="h-9 border border-slate-300 px-2 w-full rounded"
+              className="h-10 border bg-slate-100 border-slate-300 px-2 w-full rounded"
               type="password"
               placeholder="Повторіть пароль"
               id="repeat-password-input"
+              onChange={(e) => setConfirmPassword(e.target.value)}
             />
           </span>
           <button
             type="submit"
-            disabled={loading}
             className="bg-sky-500 hover:bg-sky-600 transition-all cursor-pointer py-1.5 sm:py-2.5 text-white font-medium rounded w-full"
           >
-            {loading ? "Реєстрація..." : "Зареєструватися"}
+            Зареєструватись
           </button>
           <p className="text-center">
             Вже є обліковий запис?
