@@ -17,6 +17,7 @@ import DasboardBookings from "./components/DasboardBookings.tsx";
 import Contacts from "./components/Contacts.tsx";
 import NotFoundPage from "./pages/NotFoundPage.tsx";
 import BookingPage from "./pages/BookingPage.tsx";
+import DashboardMain from "./components/DashboardMain.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -39,6 +40,7 @@ createRoot(document.getElementById("root")!).render(
               </ProtectedRoute>
             }
           >
+            <Route index element={<DashboardMain />} />
             <Route path="users" element={<DashboardUsers />} />
             <Route path="courts" element={<DashboardCourts />} />
             <Route path="bookings" element={<DasboardBookings />} />

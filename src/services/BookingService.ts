@@ -21,14 +21,13 @@ export const createBooking = async (bookingData: BookingDataType) => {
   try {
     const { userId, courtId, date, time } = bookingData;
 
-    // Перетворення "10:00" -> ISO дата на основі обраної дати
     const [day, month, year] = date.split(".");
-    const fullDate = `20${year}-${month}-${day}`; // "2025-05-06"
+    const fullDate = `20${year}-${month}-${day}`;
 
     const timeSlots = time.map((t) => {
       const [hours, minutes] = t.split(":");
       const dateObj = new Date(`${fullDate}T${hours}:${minutes}:00`);
-      return dateObj.toISOString(); // або просто `dateObj` якщо бек приймає об'єкти
+      return dateObj.toISOString();
     });
 
     const payload = {
@@ -39,6 +38,24 @@ export const createBooking = async (bookingData: BookingDataType) => {
     };
 
     const { data } = await axiosInstance.post(`${import.meta.env.VITE_BASE_URL}/booking`, payload);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const deleteBooking = async (id: string) => {
+  try {
+    const { data } = await axiosInstance.delete(`${import.meta.env.VITE_BASE_URL}/booking/${id}`);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const updateBooking = async (id: string, updateData: any) => {
+  try {
+    const { data } = await axiosInstance.put(`${import.meta.env.VITE_BASE_URL}booking/${id}`, updateData);
     return data;
   } catch (error) {
     console.log(error);

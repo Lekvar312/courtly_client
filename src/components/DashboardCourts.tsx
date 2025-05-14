@@ -160,7 +160,6 @@ const DashboardCourts = () => {
         </button>
       </div>
 
-      <ToastContainer />
       <DashboardTable columns={columns} data={filteredCourts} onDelete={handleDelete} onEdit={openEditModal} />
 
       {state.isModalOpen &&
@@ -178,6 +177,7 @@ const DashboardCourts = () => {
           </ModalView>,
           document.body
         )}
+      <ToastContainer />
     </>
   );
 };

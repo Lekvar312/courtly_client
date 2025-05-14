@@ -6,7 +6,8 @@ import { createPortal } from "react-dom";
 import ModalView from "../components/ModalView";
 import { Link } from "react-router-dom";
 import { createBooking, getAllBookings } from "../services/BookingService";
-
+import { ToastContainer } from "react-toastify";
+import { showToast } from "../components/ToastNotification";
 type BookingDataType = {
   date: string;
   time: string[];
@@ -237,6 +238,7 @@ const BookingPage: React.FC = () => {
                           onClick={async () => {
                             await createBooking(bookingData);
                             setIsModalOpen(false);
+                            showToast("Успішно заброньовано", "success");
                           }}
                           className="bg-sky-500 py-2 rounded text-white font-bold cursor-pointer hover:bg-sky-600"
                         >
@@ -264,6 +266,7 @@ const BookingPage: React.FC = () => {
             </div>
           </div>
         </article>
+        <ToastContainer />
       </section>
     </>
   );
