@@ -14,7 +14,7 @@ import Dashboard from "./components/Dashboard.tsx";
 import DashboardUsers from "./components/DashboardUsers.tsx";
 import DashboardCourts from "./components/DashboardCourts.tsx";
 import DasboardBookings from "./components/DasboardBookings.tsx";
-import Contacts from "./components/Contacts.tsx";
+import Contacts from "./pages/Contacts.tsx";
 import NotFoundPage from "./pages/NotFoundPage.tsx";
 import BookingPage from "./pages/BookingPage.tsx";
 import DashboardMain from "./components/DashboardMain.tsx";

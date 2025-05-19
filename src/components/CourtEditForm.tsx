@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import InputForm from "./InputForm";
 import { editCourt } from "../services/CourtsService";
@@ -32,10 +32,10 @@ type SelectedCourt = {
 };
 
 const CourtEditForm: React.FC<Props> = ({ selectedCourt, closeModal, types, onUpdate }) => {
-  const { register, handleSubmit, setValue } = useForm<SelectedCourt>({
+  const { register, handleSubmit, setValue, watch } = useForm<SelectedCourt>({
     defaultValues: selectedCourt,
   });
-
+  const [preview, setPreview] = useState<string | null>(null);
   const onSubmit = async (data: SelectedCourt) => {
     console.log(data);
     if (!selectedCourt._id) return <p>Такого майданчика не існує</p>;
@@ -48,6 +48,17 @@ const CourtEditForm: React.FC<Props> = ({ selectedCourt, closeModal, types, onUp
       console.log(error);
     }
   };
+
+  const watchPicture = watch("picture");
+  useEffect(() => {
+    if (watchPicture instanceof FileList && watchPicture.length > 0) {
+      const file = watchPicture[0];
+      const previewUrl = URL.createObjectURL(file);
+      setPreview(previewUrl);
+    } else if (typeof selectedCourt.picture === "string") {
+      setPreview(`${import.meta.env.VITE_BASE_URL}${selectedCourt.picture}`);
+    }
+  }, [watchPicture, selectedCourt.picture]);
 
   useEffect(() => {
     setValue("type.name", selectedCourt.type?.name);
@@ -77,7 +88,27 @@ const CourtEditForm: React.FC<Props> = ({ selectedCourt, closeModal, types, onUp
         <InputForm placeholder="Час Закриття" type="time" label="Закриття" {...register("workingHours.endTime")} />
       </span>
 
-      <InputForm type="file" placeholder="" label="Зображення" {...register("picture")} />
+      {/* <InputForm type="file" placeholder="" label="Зображення" {...register("picture")} /> */}
+      <input type="file" id="courtImage" accept="image/*" {...register("picture")} className="hidden" />
+      <label
+        htmlFor="courtImage"
+        className={`w-full h-40 border flex items-center justify-center border-dashed rounded  ${
+          preview ? "border-green-500 border-solid" : "border-black"
+        }`}
+      >
+        {preview ? (
+          <img
+            src={preview ? preview : `${import.meta.env.VITE_BASE_URL}` + selectedCourt.picture}
+            alt="uploadImage"
+            className="w-full h-full p-1 rounded-xl object-cover"
+          />
+        ) : (
+          <p className="text-black">
+            Оберіть файл з розширенням: <br />
+            <span className="text-sm"> JPEG, PNG, JPG</span>
+          </p>
+        )}
+      </label>
 
       <span className="flex w-full">
         <button type="submit" className="bg-yellow-400 hover:bg-yellow-500 transition-all cursor-pointer w-full rounded text-white p-1.5">

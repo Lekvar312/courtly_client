@@ -5,6 +5,8 @@ import { setUser } from "../store/userSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store/store";
 import { Link, useNavigate } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import { showToast } from "../components/ToastNotification";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>("");
@@ -29,11 +31,13 @@ const Login: React.FC = () => {
       setPassword("");
       navigate("/courts");
     } catch (error: any) {
+      showToast("Перевірте правильність написання данних", "error");
       setError(error.message || "Сталась помилка");
     }
   };
   return (
     <section className="w-full h-full flex justify-center items-center">
+      <ToastContainer />
       <form
         onSubmit={handleLogin}
         className={`border h-96 transition-all ${
@@ -43,11 +47,11 @@ const Login: React.FC = () => {
         {!error ? (
           <h2 className="text-2xl font-medium text-center mb-4">Увійти</h2>
         ) : (
-          <h2 className="mb-4 text-center text-2xl text-red-600">{error}</h2>
+          <h2 className="mb-4 text-center text-2xl text-red-600">{error && "Сталась помилка авторизації"}</h2>
         )}
         <div className="w-full px-6 flex flex-col justify-center gap-5">
           <span className="flex flex-col gap-0.5">
-            <label htmlFor="email-input" className="text-sm">
+            <label htmlFor="email-input" className="">
               Електронна Пошта
             </label>
             <input
@@ -60,7 +64,7 @@ const Login: React.FC = () => {
             />
           </span>
           <span className="flex flex-col gap-0.5">
-            <label htmlFor="password-input" className="text-sm">
+            <label htmlFor="password-input" className="">
               Пароль
             </label>
             <input

@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { createBooking, getAllBookings } from "../services/BookingService";
 import { ToastContainer } from "react-toastify";
 import { showToast } from "../components/ToastNotification";
+import { Check } from "lucide-react";
 type BookingDataType = {
   date: string;
   time: string[];
@@ -64,6 +65,7 @@ const BookingPage: React.FC = () => {
   const [user, setUser] = useState<User>();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [bookings, setBookings] = useState([]);
+  const [repeatBooking, setRepeatBooking] = useState<boolean>(false);
 
   useEffect(() => {
     setWeekDays(getDaysOfWeek());
@@ -122,31 +124,29 @@ const BookingPage: React.FC = () => {
       const exists = prev.time.includes(slot);
 
       if (exists) {
-        // Якщо слот уже вибраний, видаляємо його
         return {
           ...prev,
           time: prev.time.filter((s) => s !== slot),
         };
       } else {
-        // Додаємо обраний слот
         return {
           ...prev,
-          time: [...prev.time, slot].sort(), // сортуємо, щоб час був у правильному порядку
+          time: [...prev.time, slot].sort(),
         };
       }
     });
   };
 
   const getEndTime = (startTime: string) => {
-    const [hour, minute] = startTime.split(":").map(Number); // розбиваємо час на години та хвилини
+    const [hour, minute] = startTime.split(":").map(Number);
     const endDate = new Date();
-    endDate.setHours(hour + 1, minute); // додаємо 1 годину до вибраного часу
-    return endDate.toTimeString().slice(0, 5); // повертаємо час у форматі HH:MM
+    endDate.setHours(hour + 1, minute);
+    return endDate.toTimeString().slice(0, 5);
   };
   const isTimeSlotDisabled = (slot: string): boolean => {
     if (!bookingData.date) return true;
 
-    const [day, month, year] = bookingData.date.split("."); // формат dd.mm.yy
+    const [day, month, year] = bookingData.date.split(".");
     const [slotHour, slotMinute] = slot.split(":").map(Number);
 
     const slotDate = new Date(`20${year}`, Number(month) - 1, Number(day), slotHour, slotMinute);
@@ -159,7 +159,6 @@ const BookingPage: React.FC = () => {
     const [day, month, year] = bookingData.date.split(".");
     const [slotHour, slotMinute] = slot.split(":").map(Number);
 
-    // Створюємо локальний об'єкт Date з вибраної дати + години
     const targetDate = new Date(`20${year}`, Number(month) - 1, Number(day), slotHour, slotMinute);
 
     return bookings.some((b) =>
@@ -175,6 +174,29 @@ const BookingPage: React.FC = () => {
     );
   };
 
+  const createMonthlyBookings = async () => {
+    const [day, month, year] = bookingData.date.split(".");
+    const baseDate = new Date(`20${year}`, Number(month) - 1, Number(day));
+
+    for (let i = 0; i < 4; i++) {
+      const bookingDate = new Date(baseDate);
+      bookingDate.setDate(baseDate.getDate() + i * 7);
+
+      const formattedDate = bookingDate.toLocaleDateString("uk-UA", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "2-digit",
+      });
+
+      await createBooking({
+        userId: bookingData.userId,
+        courtId: bookingData.courtId,
+        date: formattedDate,
+        time: bookingData.time,
+      });
+    }
+  };
+
   return (
     <>
       <section className="border mt-9 flex rounded-xl border-slate-200 shadow-2xl items-center p-3 md:p-10 justify-center flex-col">
@@ -183,7 +205,7 @@ const BookingPage: React.FC = () => {
           <img className="h-96 rounded-xl w-full md:w-96 object-cover" src={`${import.meta.env.VITE_BASE_URL + court?.picture}`} alt={court?.name} />
           <div className="flex justify-between w-full gap-5 bg-stone-100 rounded-xl p-2">
             <ul className="flex w-full flex-wrap flex-col justify-start gap-2.5 text-lg font-medium text-gray-700">
-              <h1 className="text-center text-xs p-2 sm:text-lg font-medium">Оберіть день бронювання</h1>
+              <h1 className="text-start text-xs p-2 sm:text-xl font-medium">Оберіть день бронювання</h1>
               {weekDays.map((day, index) => (
                 <li
                   onClick={() => setBookingData((prev) => ({ ...prev, date: day.date, time: [] }))}
@@ -234,16 +256,42 @@ const BookingPage: React.FC = () => {
                           Ваш час бронювання: {bookingData.time[0]} до {getEndTime(bookingData.time[bookingData.time.length - 1])}
                         </p>
                         <b>Ціна становить: {Number(court?.price) * bookingData.time.length} грн</b>
-                        <button
-                          onClick={async () => {
-                            await createBooking(bookingData);
-                            setIsModalOpen(false);
-                            showToast("Успішно заброньовано", "success");
-                          }}
-                          className="bg-sky-500 py-2 rounded text-white font-bold cursor-pointer hover:bg-sky-600"
-                        >
-                          Підтвердити
-                        </button>
+                        <span className="flex gap-2 items-center">
+                          <input
+                            onChange={() => setRepeatBooking((prev) => !prev)}
+                            checked={repeatBooking}
+                            type="checkbox"
+                            id="monthBooking"
+                            className="sr-only"
+                          />
+                          <span
+                            onClick={() => setRepeatBooking((prev) => !prev)}
+                            className={`w-5 h-5 cursor-pointer flex rounded items-center justify-center border  ${
+                              repeatBooking ? "border-green-500 bg-green-500" : "border-black"
+                            }`}
+                          >
+                            {repeatBooking && <Check className="text-white font-bold" strokeWidth={4} />}
+                          </span>
+                          <label className="cursor-pointer" htmlFor="monthBooking">
+                            Повторяти протягом місяця
+                          </label>
+                        </span>
+                        <span className="flex justify-between">
+                          <button
+                            onClick={async () => {
+                              if (repeatBooking) {
+                                await createMonthlyBookings();
+                              } else {
+                                await createBooking(bookingData);
+                              }
+                              setIsModalOpen(false);
+                              showToast("Успішно заброньовано", "success");
+                            }}
+                            className="bg-sky-500 w-full py-2 px-1 rounded text-white font-bold cursor-pointer hover:bg-sky-600"
+                          >
+                            Підтвердити
+                          </button>
+                        </span>
                       </div>
                     ) : (
                       <div className="flex flex-col gap-3">

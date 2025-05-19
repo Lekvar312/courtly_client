@@ -52,7 +52,7 @@ const SignUp = () => {
         {error && <p className="text-red-400">{error}</p>}
         <div className="w-full px-6 flex flex-col justify-center gap-3 sm:gap-5">
           <span className="flex flex-col gap-0.5">
-            <label htmlFor="password-input" className="text-sm">
+            <label htmlFor="password-input" className="">
               Ім`я
             </label>
             <input
@@ -65,7 +65,7 @@ const SignUp = () => {
             />
           </span>
           <span className="flex flex-col gap-0.5">
-            <label htmlFor="email-input" className="text-sm">
+            <label htmlFor="email-input" className="">
               Електронна Пошта
             </label>
             <input
@@ -78,7 +78,7 @@ const SignUp = () => {
             />
           </span>
           <span className="flex flex-col gap-0.5">
-            <label htmlFor="password-input" className="text-sm">
+            <label htmlFor="password-input" className="">
               Пароль
             </label>
             <input
@@ -91,7 +91,7 @@ const SignUp = () => {
             />
           </span>
           <span className="flex flex-col gap-0.5">
-            <label htmlFor="repeat-password-input" className="text-sm">
+            <label htmlFor="repeat-password-input" className="">
               Повторіть Пароль
             </label>
             <input

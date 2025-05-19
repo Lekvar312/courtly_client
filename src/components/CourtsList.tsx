@@ -25,6 +25,7 @@ const CourtsList = () => {
   const [courtTypes, setCourtTypes] = useState<CourtType[] | null>(null);
 
   const typeFilterBlock = useRef<HTMLDivElement | null>(null);
+
   useEffect(() => {
     const getData = async () => {
       try {
@@ -98,7 +99,7 @@ const CourtsList = () => {
                         setFilterButton(null);
                         setTypeFilter("");
                       }}
-                      className=" text-white font-medium py-2 bg-red-500 hover:bg-red-600  rounded-b-xl"
+                      className=" text-white font-medium py-2 bg-red-500 hover:bg-white hover:text-red-500  rounded-b-xl"
                     >
                       Скинути
                     </li>

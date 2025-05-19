@@ -33,7 +33,7 @@ const DashboardSidebar: React.FC<AdminSideBar> = ({ isOpen, handleDashboard }) =
           </Link>
           <Link to={"courts"}>
             <DashboardSidebarItems
-              colors={{ mainColor: "bg-lime-400", hoverColor: "hover:bg-lime-500" }}
+              colors={{ mainColor: "bg-green-400", hoverColor: "hover:bg-green-600" }}
               icon={<Volleyball strokeWidth={2} />}
               isOpen={isOpen}
             >
