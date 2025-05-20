@@ -1,5 +1,5 @@
 import DashboardSidebarItems from "./DashboardSidebarItems";
-import { Menu, Users, Volleyball, ListCheck, LogOut } from "lucide-react";
+import { Menu, Users, Volleyball, ListCheck, LogOut, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
@@ -47,6 +47,15 @@ const DashboardSidebar: React.FC<AdminSideBar> = ({ isOpen, handleDashboard }) =
               isOpen={isOpen}
             >
               Бронювання
+            </DashboardSidebarItems>
+          </Link>
+          <Link to={"reviews"}>
+            <DashboardSidebarItems
+              colors={{ mainColor: "bg-violet-400", hoverColor: "hover:bg-violet-500" }}
+              icon={<Mail strokeWidth={2} />}
+              isOpen={isOpen}
+            >
+              Відгуки
             </DashboardSidebarItems>
           </Link>
         </ul>

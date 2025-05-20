@@ -15,7 +15,7 @@ const InputForm: React.FC<Input> = ({ onChange, type = "text", placeholder, labe
   return (
     <span className="flex flex-col w-full">
       <label htmlFor="email-input" className="text-lg flex items-center gap-2">
-        <i>{icon}</i>
+        {icon && <i>{icon}</i>}
         <p>{label}</p>
       </label>
       <input

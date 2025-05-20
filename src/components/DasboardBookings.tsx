@@ -3,6 +3,9 @@ import DashboardTable from "./DashboardTable";
 import { deleteBooking, getAllBookings, updateBooking } from "../services/BookingService";
 import { fetchCourts } from "../services/CourtsService";
 import { getAllUsers } from "../services/UserService";
+import useDebounce from "../hooks/useDebounce";
+import { Search } from "lucide-react";
+
 
 import { showToast } from "./ToastNotification";
 import { ToastContainer } from "react-toastify";
@@ -54,6 +57,10 @@ const DasboardBookings = () => {
   const [selectedUser, setSelectedUser] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [reloadBookings, setReloadBookings] = useState(false);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+const debouncedSearchTerm = useDebounce(searchTerm, 300);
+const [filteredBookings, setFilteredBookings] = useState<Booking[]>([]);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,6 +79,14 @@ const DasboardBookings = () => {
           : [],
       }));
 
+      const filtered = bookings.filter((booking) =>
+        booking["userId.name"].toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+        booking["userId.email"].toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+        booking["courtId"].toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+        booking["courtId.address"].toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+      );
+      setFilteredBookings(filtered);
+
       const courtData = await fetchCourts();
 
       const usersData = await getAllUsers();
@@ -83,7 +98,7 @@ const DasboardBookings = () => {
       setBookings(formattedBookings);
     };
     fetchData();
-  }, [reloadBookings]);
+  }, [reloadBookings, debouncedSearchTerm, bookings]);
 
   const handleDelete = async (id: string) => {
     try {
@@ -132,7 +147,19 @@ const DasboardBookings = () => {
     <section>
       <h1 className="text-2xl font-bold mb-4">Панель Адміністратора: Бронювання</h1>
       <div className="w-full  max-h-[800px]  overflow-y-scroll">
-        <DashboardTable columns={columns} data={bookings} onDelete={handleDelete} onEdit={handleUpdateBooking} />
+      <div className="w-full max-w-md mb-5 flex items-center border border-slate-300 rounded-xl shadow-sm focus-within:ring-1 focus-within:ring-blue-500 focus-within:border-blue-500 transition">
+        <span className="px-3 text-slate-400">
+          <Search size={20} />
+        </span>
+        <input
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Пошук за користувачем, майданчиком або адресою..."
+          className="w-full py-2 pr-4 bg-transparent focus:outline-none"
+        />
+      </div>
+
+        <DashboardTable columns={columns} data={filteredBookings} onDelete={handleDelete} onEdit={handleUpdateBooking} />
       </div>
       {isModalOpen &&
         createPortal(
