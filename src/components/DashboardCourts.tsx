@@ -34,6 +34,7 @@ type State = {
   selectedCourt: Court | null;
   types: Type[];
   modalType: "create" | "edit" | null;
+  searchTerm: string;
 };
 
 type Actions =
@@ -44,7 +45,8 @@ type Actions =
   | { type: "CREATE_NEW_COURT"; payload: Court }
   | { type: "DELETE_COURT"; payload: string }
   | { type: "UPDATE_COURT"; payload: Court }
-  | { type: "SET_MODAL_TYPE"; payload: "create" | "edit" | null };
+  | { type: "SET_MODAL_TYPE"; payload: "create" | "edit" | null }
+  | { type: "SEARCH"; payload: string };
 
 const initialState: State = {
   courts: [],
@@ -52,6 +54,7 @@ const initialState: State = {
   selectedCourt: null,
   types: [],
   modalType: null,
+  searchTerm: "",
 };
 
 const reducer = (state: State, action: Actions): State => {
@@ -75,6 +78,11 @@ const reducer = (state: State, action: Actions): State => {
         ...state,
         courts: state.courts.map((c) => (c._id === action.payload._id ? action.payload : c)),
       };
+    case "SEARCH":
+      return {
+        ...state,
+        searchTerm: action.payload,
+      };
     default:
       return state;
   }
@@ -82,8 +90,7 @@ const reducer = (state: State, action: Actions): State => {
 
 const DashboardCourts = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [searchTerm, setSearchTerm] = useState("");
-  const debouncedSearch = useDebounce(searchTerm, 300);
+  const debouncedSearch = useDebounce(state.searchTerm, 300);
   const [filteredCourts, setFilteredCourts] = useState<Court[]>([]);
 
   useEffect(() => {
@@ -140,17 +147,6 @@ const DashboardCourts = () => {
   return (
     <>
       <h2 className="text-2xl font-bold mb-4">Панель Адміністратора: Спортивні Майданчики</h2>
-      <div className="w-full max-w-md flex items-center border border-slate-300 rounded-xl shadow-sm focus-within:ring-1 focus-within:ring-blue-500 focus-within:border-blue-500 transition">
-        <span className="px-3 text-slate-400">
-          <Search size={20} />
-        </span>
-        <input
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Пошук по імені, адресі або типу..."
-          className="w-full py-2 pr-4 bg-transparent focus:outline-none"
-        />
-      </div>
 
       <div className="flex justify-between items-center mb-4 flex-wrap gap-4">
         <CourtTypes />
@@ -159,7 +155,19 @@ const DashboardCourts = () => {
           Додати Майданчик
         </button>
       </div>
-
+      <div className="flex w-full ">
+        <div className="w-full max-w-md flex items-center border border-slate-300 rounded-xl shadow-sm focus-within:ring-1 focus-within:ring-blue-500 focus-within:border-blue-500 transition">
+          <span className="px-3 text-slate-400">
+            <Search size={20} />
+          </span>
+          <input
+            value={state.searchTerm}
+            onChange={(e) => dispatch({ type: "SEARCH", payload: e.target.value })}
+            placeholder="Пошук по імені, адресі або типу..."
+            className="w-full py-2 pr-4 bg-transparent focus:outline-none"
+          />
+        </div>
+      </div>
       <DashboardTable columns={columns} data={filteredCourts} onDelete={handleDelete} onEdit={openEditModal} />
 
       {state.isModalOpen &&

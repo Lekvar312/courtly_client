@@ -39,7 +39,7 @@ const Header: React.FC = () => {
               <NavLink
                 to="/"
                 onClick={() => setIsMenuOpen(false)}
-                className={({ isActive }) => `${isActive ? "bg-sky-500 text-white rounded-xl" : ""} py-1 px-2.5`}
+                className={({ isActive }) => `${isActive ? "bg-sky-500 text-white rounded" : ""} py-1 px-2.5`}
               >
                 Головна
               </NavLink>
@@ -48,7 +48,7 @@ const Header: React.FC = () => {
               <NavLink
                 onClick={() => setIsMenuOpen(false)}
                 to="/courts"
-                className={({ isActive }) => `${isActive ? "bg-sky-500 text-white rounded-xl" : ""} py-1 px-2.5`}
+                className={({ isActive }) => `${isActive ? "bg-sky-500 text-white rounded" : ""} py-1 px-2.5`}
               >
                 Майданчики
               </NavLink>
@@ -57,7 +57,7 @@ const Header: React.FC = () => {
               <NavLink
                 onClick={() => setIsMenuOpen(false)}
                 to="/contacts"
-                className={({ isActive }) => `${isActive ? "bg-sky-500 text-white rounded-xl" : ""} py-1 px-2.5`}
+                className={({ isActive }) => `${isActive ? "bg-sky-500 text-white rounded" : ""} py-1 px-2.5`}
               >
                 Контакти
               </NavLink>

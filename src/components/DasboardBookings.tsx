@@ -59,7 +59,7 @@ const DasboardBookings = () => {
     const fetchData = async () => {
       const bookingsData = await getAllBookings();
 
-      const formattedBookings = bookingsData.map((booking) => ({
+      const formattedBookings = bookingsData.map((booking: any) => ({
         _id: booking._id,
         courtId: booking.courtId?.name || "—",
         "courtId._id": booking.courtId?._id || "-",
@@ -98,6 +98,11 @@ const DasboardBookings = () => {
   const handleUpdateBooking = (updateBooking: Booking) => {
     setIsModalOpen(true);
     setBookingToUpdate(updateBooking);
+    setSelectedCourt(updateBooking["courtId._id"]);
+    setSelectedUser(updateBooking["userId._id"]);
+    const parts = updateBooking.date.split(".");
+    const formatted = `${parts[2]}-${parts[1]}-${parts[0]}`;
+    setSelectedDate(formatted);
     console.log(updateBooking);
   };
 
@@ -108,7 +113,7 @@ const DasboardBookings = () => {
       await updateBooking(bookingToUpdate._id, {
         courtId: selectedCourt ? selectedCourt : bookingToUpdate["courtId._id"],
         userId: selectedUser ? selectedUser : bookingToUpdate["userId._id"],
-        date: selectedDate ? selectedDate : bookingToUpdate.date,
+        date: selectedDate ? new Date(selectedDate).toISOString() : bookingToUpdate.date,
       });
       showToast("Успішно новлено бронювання", "success");
       setIsModalOpen(false);
@@ -126,7 +131,9 @@ const DasboardBookings = () => {
   return (
     <section>
       <h1 className="text-2xl font-bold mb-4">Панель Адміністратора: Бронювання</h1>
-      <DashboardTable columns={columns} data={bookings} onDelete={handleDelete} onEdit={handleUpdateBooking} />
+      <div className="w-full  max-h-[800px]  overflow-y-scroll">
+        <DashboardTable columns={columns} data={bookings} onDelete={handleDelete} onEdit={handleUpdateBooking} />
+      </div>
       {isModalOpen &&
         createPortal(
           <ModalView
@@ -183,6 +190,7 @@ const DasboardBookings = () => {
                 placeholder="Оберіть дату"
                 type="date"
                 label="Дата бронювання"
+                value={selectedDate}
                 onChange={(e) => {
                   setSelectedDate(e.target.value);
                 }}

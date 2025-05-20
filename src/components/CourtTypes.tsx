@@ -1,4 +1,4 @@
-import { useReducer, useEffect } from "react";
+import { useReducer, useEffect, useRef } from "react";
 import TableActionButtons from "./TableActionButtons";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { createCourtType, deleteCourtType, editCourtType, getAllTypes } from "../services/CourtTypes";
@@ -50,7 +50,7 @@ const reducer = (state: State, action: Actions) => {
     case "TOGGLE_DROPDOWN": {
       return {
         ...state,
-        isDropdownOpen: !state.isDropdownOpen,
+        isDropdownOpen: action.payload,
       };
     }
     case "SET_NEW_TYPE": {
@@ -96,6 +96,7 @@ const reducer = (state: State, action: Actions) => {
 
 const CourtTypes = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const dropdown = useRef(null);
 
   useEffect(() => {
     const getCourtTypes = async () => {
@@ -107,6 +108,15 @@ const CourtTypes = () => {
       }
     };
     getCourtTypes();
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdown.current && !(dropdown.current as HTMLElement).contains(event.target as Node)) {
+        dispatch({ type: "TOGGLE_DROPDOWN", payload: false });
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
   }, []);
 
   const openCreateModal = () => {
@@ -131,11 +141,13 @@ const CourtTypes = () => {
         if (!updatedCourtType?.data?.courtType) return false;
         dispatch({ type: "UPDATE_COURT_TYPE", payload: updatedCourtType.data.courtType });
         showToast("Успішно відредаговано тип", "success");
+        dispatch({ type: "TOGGLE_MODAL", payload: false });
       } else {
         const newCourtType = await createCourtType(state.newType);
         if (!newCourtType?.data?.courtType) return console.log("Створення не вдалося");
         dispatch({ type: "CREATE_COURT_TYPE", payload: newCourtType.data.courtType });
         showToast("Успішно додано новий тип", "success");
+        dispatch({ type: "TOGGLE_MODAL", payload: false });
       }
     } catch (error) {
       console.error("Помилка при збереженні:", error);
@@ -156,7 +168,7 @@ const CourtTypes = () => {
 
   return (
     <div className="flex gap-2">
-      <div className="relative flex flex-col w-60 items-start gap-4  bg-sky-500 hover:bg-sky-600 transition-all text-white rounded">
+      <div ref={dropdown} className="relative flex flex-col w-60 items-start gap-4  bg-sky-500 hover:bg-sky-600 transition-all text-white rounded">
         <button
           onClick={() => dispatch({ type: "TOGGLE_DROPDOWN", payload: !state.isDropdownOpen })}
           className="flex w-full  p-1 justify-between text-lg font-medium items-center gap-2 cursor-pointer"
