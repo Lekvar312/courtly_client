@@ -18,3 +18,31 @@ export const sendReview = async (formData: formData) => {
     console.log(error);
   }
 };
+
+
+export const updateReview = async (id: string, dataToUpdate:any) => {
+  try {
+    const {data} = await axiosInstance.put(`${import.meta.env.VITE_BASE_URL}review/${id}`, dataToUpdate)
+    return data
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const getAllReviews = async () => {
+  try {
+    const {data} = await axiosInstance(`${import.meta.env.VITE_BASE_URL}review`)
+    return data
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const deleteReview = async (id: string) => {
+  try {
+    const {data} = await axiosInstance.delete(`${import.meta.env.VITE_BASE_URL}review/${id}`)
+    return data
+  } catch (error) {
+    console.log(error)
+  }
+}
