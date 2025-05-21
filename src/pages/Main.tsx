@@ -7,7 +7,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation, Autoplay } from "swiper/modules";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Main: React.FC = () => {
   const [courts, setCourts] = useState<Court[] | null>(null);
@@ -99,6 +99,7 @@ const Main: React.FC = () => {
         <p className="text-lg">
           Ми постійно розширюємо нашу мережу партнерів, щоб запропонувати вам ще більше варіантів для занять спортом. Наша мета — зробити спорт
           доступнішим та організованішим для кожного.
+          Якщо в вас виникли якісь питання, ви можете <Link className="text-sky-500 hover:underline" to="/contacts"> звя`затись з нами</Link>
         </p>
       </section>
       <section className="w-full flex flex-col gap-8 mt-10 items-center justify-center relative">
