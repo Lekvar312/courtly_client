@@ -4,8 +4,9 @@ import { getAllBookings } from "../services/BookingService";
 import { getAllUsers } from "../services/UserService";
 import { getAllTypes } from "../services/CourtTypes";
 import { Court } from "../type";
-import { ListCheckIcon, User, User2Icon, VolleyballIcon } from "lucide-react";
+import { ListCheckIcon, Mail, User, User2Icon, VolleyballIcon } from "lucide-react";
 import { Link } from "react-router-dom";
+import { getAllReviews } from "../services/ReviewService";
 
 type Bookings = {
   _id: string;
@@ -19,11 +20,19 @@ type Bookings = {
   userId: { _id: string; name: string; email: string };
 };
 
+type Review = {
+  _id: string,
+  userName: string,
+  email: string,
+  theme: string,
+  message: string
+}
+
 const DashboardMain = () => {
   const [user, setUsers] = useState([]);
   const [courts, setCourts] = useState<Court[]>([]);
   const [bookings, setBookings] = useState<Bookings[]>([]);
-  const [types, setTypes] = useState([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
 
   useEffect(() => {
     const getData = async () => {
@@ -32,12 +41,12 @@ const DashboardMain = () => {
         const courtsData = await fetchCourts();
         const bookingsData = await getAllBookings();
         const usersData = await getAllUsers();
-        const typesData = await getAllTypes();
+        const reviewsData = await getAllReviews();
 
         setCourts(courtsData);
         setBookings(bookingsData);
         setUsers(usersData);
-        setTypes(typesData);
+        setReviews(reviewsData);
       } catch (error) {
         console.log(error);
       }
@@ -48,7 +57,7 @@ const DashboardMain = () => {
   return (
     <section>
       <h1 className="text-2xl font-bold mb-4">Панель Адімністратора, Головна сторінка</h1>
-      <div className="flex flex-col md:flex-row justify-center md:justify-start gap-2">
+      <div className="flex flex-wrap flex-col md:flex-row justify-center md:justify-start gap-2">
         <article className="bg-blue-400 rounded-xl p-5 text-center text-white  w-full md:w-96 h-40 flex flex-col justify-center items-start gap-4">
           <div className="flex justify-between w-full">
             <span className="flex flex-col justify-start items-start">
@@ -90,6 +99,20 @@ const DashboardMain = () => {
             </div>
           </div>
           <Link to={"users"}>
+            <p className="font-medium cursor-pointer hover:underline">Детальніше</p>
+          </Link>
+        </article>
+        <article className="bg-purple-400 rounded-xl p-5 text-center text-white w-full md:w-96 h-40 flex flex-col justify-center items-start gap-4">
+          <div className="flex justify-between w-full">
+            <span className="flex flex-col justify-start items-start">
+              <h1 className="text-4xl font-bold">{reviews.length} </h1>
+              <h4 className="text-2xl font-bold">Відгуки</h4>
+            </span>
+            <div className="bg-white w-12 rounded-full p-2 flex items-center justify-center h-12">
+              <Mail className="text-purple-400" strokeWidth="2" size={50} />
+            </div>
+          </div>
+          <Link to={"reviews"}>
             <p className="font-medium cursor-pointer hover:underline">Детальніше</p>
           </Link>
         </article>
