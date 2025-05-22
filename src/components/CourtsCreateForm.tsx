@@ -24,16 +24,18 @@ type FormData = {
     startTime: string;
     endTime: string;
   };
-  picture: File;
+  picture: File | null;
 };
 
+
 const CourtsCreateForm: React.FC<CourtsActionFormProps> = ({ types, onCreate }) => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-  } = useForm<FormData>();
+const {
+  register,
+  handleSubmit,
+  formState: { errors },
+  setValue,
+} = useForm<FormData>();
+
   const [selectedType, setSelectedType] = useState("");
   const [preview, setPreview] = useState<string | null>(null);
 
@@ -113,7 +115,13 @@ const CourtsCreateForm: React.FC<CourtsActionFormProps> = ({ types, onCreate }) 
             error={errors.workingHours?.endTime?.message}
           />
         </span>
-        <input type="file" id="courtImage" accept="image/*" {...register("picture")} onChange={handleFileChange} />
+        <input
+  type="file"
+  id="courtImage"
+  accept="image/*"
+  onChange={handleFileChange}
+/>
+
         <label
           htmlFor="courtImage"
           className={`w-full h-40 border flex items-center justify-center border-dashed rounded  ${
