@@ -66,11 +66,9 @@ export const createCourt = async (courtData: Data) => {
     formData.append("workingHours.endTime", courtData.workingHours.endTime);
 
     if (courtData.picture) {
-      if (courtData.picture instanceof FileList && courtData.picture.length > 0) {
-        formData.append("picture", courtData.picture[0]);
-      } else if (courtData.picture instanceof File) {
-        formData.append("picture", courtData.picture);
-      }
+      if (courtData.picture instanceof File) {
+  formData.append("picture", courtData.picture);
+  } 
     }
 
     const { data } = await axiosInstance.post("/courts", formData, {
