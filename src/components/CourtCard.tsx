@@ -16,7 +16,7 @@ const CourtCard: React.FC<CourtCardProps> = ({ court }) => {
       <article className="border-1  h-full border-gray-300 flex flex-col justify-between">
         <img className="w-full h-40 object-cover" src={`${import.meta.env.VITE_BASE_URL + court.picture}`} alt={court.name} />
         <div className="px-4">
-          <h2 className="md:text-lg text-xl font-bold  capitalize  text-center">{court.name}</h2>
+          <h2 className="md:text-lg text-xl font-bold capitalize whitespace-nowrap truncate text-center">{court.name}</h2>
           <p className="text-base sm:text-lg font-medium transition-all truncate">{court.address}</p>
           <p className="italic md:not-italic">{court.type?.name}</p>
           <span className="flex justify-between">
