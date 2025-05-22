@@ -68,6 +68,7 @@ const DashboardUsers = () => {
   const handleUpdateUser = (updatedUser: User) => {
     const updatedList = users?.map((user) => (user._id === updatedUser._id ? updatedUser : user));
     setUsers(updatedList || []);
+    setShowModal(false);
   };
 
   return (

@@ -126,6 +126,7 @@ const DashboardCourts = () => {
 
   const handleCreateCourt = (newCourt: Court) => {
     dispatch({ type: "CREATE_NEW_COURT", payload: newCourt });
+    dispatch({ type: "TOGGLE_MODAL", payload: false });
   };
 
   const handleEditCourt = async (updatedCourt: Court) => {
