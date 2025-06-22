@@ -141,6 +141,14 @@ const Main: React.FC = () => {
           <ChevronRight className="w-6 h-6" />
         </button>
       </section>
+
+
+      <section>
+        <div className="flex flex-col md:flex-row">
+          <p>penis</p>
+          <p>dupa</p>
+        </div>
+      </section>
     </main>
   );
 };

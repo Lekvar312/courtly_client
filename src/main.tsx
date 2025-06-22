@@ -53,3 +53,16 @@ createRoot(document.getElementById("root")!).render(
     </Provider>
   </StrictMode>
 );
+
+declare namespace JSX {
+  interface IntrinsicElements {
+    "df-messenger": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
+      intent?: string;
+      "chat-title"?: string;
+      "agent-id": string;
+      "language-code"?: string;
+      "chat-icon"?: string;
+      "wait-open"?: boolean;
+    };
+  }
+}
