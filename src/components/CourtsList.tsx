@@ -26,6 +26,9 @@ const CourtsList = () => {
 
   const typeFilterBlock = useRef<HTMLDivElement | null>(null);
 
+
+  console.log("courts", courts.filter(court => court.type.name == 'Басейн').map(court => court.name).join())
+
   useEffect(() => {
     const getData = async () => {
       try {

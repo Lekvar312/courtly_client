@@ -98,6 +98,8 @@ const CourtTypes = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const dropdown = useRef(null);
 
+  console.log("court-types:", state.courtTypes.filter(type => type.name))
+
   useEffect(() => {
     const getCourtTypes = async () => {
       try {

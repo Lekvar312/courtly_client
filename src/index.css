@@ -8,7 +8,7 @@ body,
 df-messenger {
   --df-messenger-bot-message: #6ee26a;
   --df-messenger-user-message: #eccff5;
-  --df-messenger-button-titlebar-color: #3483e4;
+  --df-messenger-button-titlebar-color:  oklch(0.685 0.169 237.323);
   --df-messenger-button-titlebar-font-color: white;
   --df-messenger-chat-background-color: #ffffff;
   --df-messenger-input-box-color: #f1f1f1;

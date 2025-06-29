@@ -144,10 +144,6 @@ const Main: React.FC = () => {
 
 
       <section>
-        <div className="flex flex-col md:flex-row">
-          <p>penis</p>
-          <p>dupa</p>
-        </div>
       </section>
     </main>
   );
