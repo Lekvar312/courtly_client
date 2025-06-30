@@ -141,6 +141,10 @@ const Main: React.FC = () => {
           <ChevronRight className="w-6 h-6" />
         </button>
       </section>
+
+
+      <section>
+      </section>
     </main>
   );
 };

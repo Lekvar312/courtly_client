@@ -71,6 +71,9 @@ const DashboardUsers = () => {
     setShowModal(false);
   };
 
+
+  console.log("Users", users?.map(user => user.name))
+
   return (
     <>
       <h2 className="text-2xl font-bold mb-4">Панель Адміністратора: Користувачі</h2>
